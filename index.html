@@ -23,7 +23,7 @@
             <h1 id="page-title">Expediter Tool Kit</h1>
             <p class="intro">
               Quick-reference tools for inclusive date counting, custody credits,
-              firearm-prohibition checks, and misdemeanor exposure.
+              firearm-prohibition checks, misdemeanor exposure, and probation requirements.
             </p>
           </div>
         </header>
@@ -247,6 +247,77 @@
             change the result. Entries marked “varies” need additional facts or a subdivision.
             Statutory data checked against California Legislative Information in October 2026.
           </aside>
+            </section>
+          </div>
+        </details>
+
+        <details class="tool-panel">
+          <summary class="tool-summary">
+            <div>
+              <p class="eyebrow">Sentencing quick reference</p>
+              <h2>Probation Eligibility & Mandatory Terms</h2>
+              <p>Check whether probation is generally available and flag mandatory offense-specific conditions.</p>
+            </div>
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <section class="probation-card" aria-labelledby="probation-title">
+              <p class="eyebrow">California misdemeanor probation</p>
+              <h2 id="probation-title">Probation Lookup</h2>
+              <p class="probation-intro">
+                Search by code section or common offense name. The result distinguishes general
+                probation eligibility from mandatory conditions that apply if probation is granted.
+              </p>
+
+              <form id="probation-form" class="lookup-form">
+                <label for="probation-lookup">Offense</label>
+                <div class="lookup-controls">
+                  <input
+                    id="probation-lookup"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="e.g., PC 243(e)(1), domestic battery, or DUI"
+                  />
+                  <button type="submit" class="lookup-button">Check probation</button>
+                </div>
+              </form>
+
+              <div id="probation-result" class="probation-result" hidden aria-live="polite">
+                <div class="probation-heading">
+                  <div>
+                    <p id="probation-code" class="exposure-code"></p>
+                    <p id="probation-name" class="exposure-name"></p>
+                  </div>
+                  <span id="probation-badge" class="exposure-badge"></span>
+                </div>
+
+                <div class="probation-grid">
+                  <div class="probation-stat">
+                    <span>Probation</span>
+                    <strong id="probation-status">—</strong>
+                  </div>
+                  <div class="probation-stat">
+                    <span>Term</span>
+                    <strong id="probation-term">—</strong>
+                  </div>
+                </div>
+
+                <div id="probation-terms-wrap" class="probation-terms-wrap">
+                  <p class="probation-terms-title">Mandatory / notable terms</p>
+                  <ul id="probation-terms" class="probation-terms"></ul>
+                </div>
+
+                <p id="probation-note" class="probation-note"></p>
+                <div id="probation-links" class="probation-links"></div>
+              </div>
+
+              <aside class="legal-note">
+                <strong>Scope:</strong> This is a quick-reference aid, not a complete probation
+                eligibility analysis. General misdemeanor probation authority is in Penal Code
+                § 1203a, but offense-specific statutes, priors, enhancements, victim relationship,
+                and case facts can change eligibility or required terms. Verify the governing
+                statutes before relying on the result.
+              </aside>
             </section>
           </div>
         </details>
