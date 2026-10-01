@@ -156,6 +156,63 @@
             >View the official statute</a>.
           </p>
         </section>
+
+        <section class="exposure-card" aria-labelledby="exposure-title">
+          <p class="eyebrow">California misdemeanor sentencing</p>
+          <h2 id="exposure-title">Maximum Exposure Lookup</h2>
+          <p class="exposure-intro">
+            Enter a Penal Code, Vehicle Code, or Health and Safety Code section.
+            Flexible formats work — for example <strong>PC 242</strong>,
+            <strong>242</strong>, <strong>VC 20002</strong>, or <strong>HS 11350</strong>.
+          </p>
+
+          <form id="exposure-form" class="lookup-form">
+            <label for="exposure-lookup">Offense</label>
+            <div class="lookup-controls">
+              <input
+                id="exposure-lookup"
+                type="text"
+                autocomplete="off"
+                placeholder="e.g., PC 242, VC 20002, HS 11350"
+              />
+              <button type="submit" class="lookup-button">Check exposure</button>
+            </div>
+          </form>
+
+          <div id="exposure-result" class="exposure-result" hidden aria-live="polite">
+            <div class="exposure-heading">
+              <div>
+                <p id="exposure-code" class="exposure-code"></p>
+                <p id="exposure-name" class="exposure-name"></p>
+              </div>
+              <span id="exposure-badge" class="exposure-badge"></span>
+            </div>
+
+            <div class="exposure-grid">
+              <div class="exposure-stat">
+                <span>Maximum misdemeanor jail</span>
+                <strong id="exposure-jail">—</strong>
+              </div>
+              <div class="exposure-stat">
+                <span>Statutory basis</span>
+                <strong id="exposure-basis">—</strong>
+              </div>
+            </div>
+
+            <p id="exposure-note" class="exposure-note"></p>
+            <a id="exposure-source" class="statute-link" target="_blank" rel="noopener noreferrer">
+              View governing statute
+            </a>
+          </div>
+
+          <aside class="legal-note">
+            <strong>Scope:</strong> This is a quick misdemeanor jail-exposure reference, not a
+            complete sentencing calculation. Priors, enhancements, multiple counts, mandatory
+            minimums, probation conditions, alternative felony punishment, and other statutes may
+            change the result. Entries marked “varies” need additional facts or a subdivision.
+            Statutory data checked against California Legislative Information in October 2026.
+          </aside>
+        </section>
       </section>
     </main>
 
