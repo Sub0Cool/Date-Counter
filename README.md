@@ -60,3 +60,21 @@ other firearm prohibition applies.
 
 Statutory source: California Legislative Information, Penal Code § 29805,
 current text effective January 1, 2026.
+
+
+## California misdemeanor exposure lookup
+
+The app includes a starter lookup table for commonly encountered California
+misdemeanors across the Penal Code, Vehicle Code, and Health and Safety Code.
+Input is flexible: examples include `PC 242`, `242`, `VC 20002`, and
+`HS 11350`.
+
+The lookup reports the maximum misdemeanor county-jail exposure and the
+statutory provision supplying the punishment. Where exposure depends on a
+subdivision, prior conviction, injury, value threshold, or other fact, the tool
+returns **Varies** rather than inventing a single answer. The table is designed
+to be expanded over time.
+
+This is a quick-reference tool, not a complete sentencing calculator. It does
+not automatically add enhancements, consecutive counts, probation conditions,
+or alternative felony punishment.
