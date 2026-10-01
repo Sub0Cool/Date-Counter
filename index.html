@@ -105,6 +105,57 @@
             misconduct. Verify eligibility before relying on the result.
           </aside>
         </section>
+
+        <section class="lookup-card" aria-labelledby="lookup-title">
+          <p class="eyebrow">California firearm prohibition lookup</p>
+          <h2 id="lookup-title">Penal Code § 29805</h2>
+          <p class="lookup-intro">
+            Enter a Penal Code section to see whether it appears in the current text of § 29805.
+            Flexible formats are accepted, including <strong>242</strong>, <strong>PC 242</strong>,
+            <strong>Penal Code section 242</strong>, and subdivision-specific entries such as
+            <strong>368(b)</strong>.
+          </p>
+
+          <form id="lookup-form" class="lookup-form">
+            <label for="code-lookup">Code section</label>
+            <div class="lookup-controls">
+              <input
+                id="code-lookup"
+                type="text"
+                autocomplete="off"
+                placeholder="e.g., PC 242 or 368(b)"
+              />
+              <button type="submit" class="lookup-button">Check § 29805</button>
+            </div>
+          </form>
+
+          <div id="lookup-result" class="lookup-result" hidden aria-live="polite">
+            <div class="lookup-status-row">
+              <span id="lookup-icon" class="lookup-icon" aria-hidden="true"></span>
+              <div>
+                <p id="lookup-status" class="lookup-status"></p>
+                <p id="lookup-summary" class="lookup-summary"></p>
+              </div>
+            </div>
+
+            <button id="show-where" class="show-where-button" type="button" hidden>
+              Show where in § 29805
+            </button>
+
+            <div id="lookup-details" class="lookup-details" hidden></div>
+          </div>
+
+          <p class="lookup-source">
+            Based on the California Legislative Information text of Penal Code § 29805,
+            effective January 1, 2026. A “not listed” result means only that the entered
+            offense was not found in § 29805; other firearm prohibitions may still apply.
+            <a
+              href="https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=PEN&sectionNum=29805."
+              target="_blank"
+              rel="noopener noreferrer"
+            >View the official statute</a>.
+          </p>
+        </section>
       </section>
     </main>
 
