@@ -7,6 +7,12 @@ const resetRangesButton = document.querySelector("#reset-ranges");
 const grandTotal = document.querySelector("#grand-total");
 const totalNote = document.querySelector("#total-note");
 
+const fourDayThreshold = document.querySelector("#four-day-threshold");
+const actualCreditDays = document.querySelector("#actual-credit-days");
+const conductCreditDays = document.querySelector("#conduct-credit-days");
+const totalCreditDays = document.querySelector("#total-credit-days");
+const creditFormulaNote = document.querySelector("#credit-formula-note");
+
 function dateToUtc(dateString) {
   const [year, month, day] = dateString.split("-").map(Number);
   return Date.UTC(year, month - 1, day);
@@ -29,6 +35,49 @@ function renumberRanges() {
       `Remove date range ${number}`,
     );
   });
+}
+
+function calculateSection4019(actualDays) {
+  if (actualDays <= 0 || !fourDayThreshold.checked) {
+    return { actual: actualDays, conduct: 0, total: actualDays };
+  }
+
+  // Standard current § 4019 formula: two conduct days for each complete
+  // two-day block of actual custody. An unpaired odd day earns no extra day.
+  const conduct = Math.floor(actualDays / 2) * 2;
+
+  return {
+    actual: actualDays,
+    conduct,
+    total: actualDays + conduct,
+  };
+}
+
+function renderCustodyCredits(actualDays) {
+  const credits = calculateSection4019(actualDays);
+
+  actualCreditDays.textContent = credits.actual.toLocaleString();
+  conductCreditDays.textContent = credits.conduct.toLocaleString();
+  totalCreditDays.textContent = credits.total.toLocaleString();
+
+  if (actualDays === 0) {
+    creditFormulaNote.textContent = "Add a complete custody range to calculate credits.";
+    return;
+  }
+
+  if (!fourDayThreshold.checked) {
+    creditFormulaNote.textContent =
+      "No § 4019 conduct credit added because the four-day commitment requirement is marked as not satisfied.";
+    return;
+  }
+
+  if (actualDays % 2 === 0) {
+    creditFormulaNote.textContent =
+      `${actualDays} actual + ${credits.conduct} conduct = ${credits.total} total days of credit.`;
+  } else {
+    creditFormulaNote.textContent =
+      `${actualDays} actual + ${credits.conduct} conduct = ${credits.total} total days of credit. The final unpaired actual day does not generate an additional conduct day.`;
+  }
 }
 
 function calculateTotals() {
@@ -79,6 +128,7 @@ function calculateTotals() {
   );
 
   grandTotal.textContent = uniqueDays.toLocaleString();
+  renderCustodyCredits(uniqueDays);
 
   if (validIntervals.length === 0) {
     totalNote.textContent = "Add a complete range to see your total.";
@@ -107,6 +157,8 @@ resetRangesButton.addEventListener("click", () => {
   calculateTotals();
 });
 
+fourDayThreshold.addEventListener("change", calculateTotals);
+
 rangesContainer.addEventListener("input", calculateTotals);
 rangesContainer.addEventListener("change", calculateTotals);
 rangesContainer.addEventListener("click", (event) => {
@@ -119,3 +171,4 @@ rangesContainer.addEventListener("click", (event) => {
 });
 
 addRange();
+calculateTotals();
