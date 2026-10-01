@@ -3,6 +3,8 @@
 A small, dependency-free browser app that counts inclusive calendar days across
 multiple date ranges. Overlapping dates are counted only once in the grand total.
 
+It also includes an optional California Penal Code § 4019 custody-credit calculator.
+
 ## Use it locally
 
 Download or clone the project, then open `index.html` in any modern web browser.
@@ -17,9 +19,27 @@ No install or build step is required.
    click **Save**.
 5. GitHub will show the public site link after deployment finishes.
 
-## How counting works
+## How date counting works
 
 - Start and end dates both count. September 28–30, 2026 is **3 days**.
 - Each row displays its own inclusive day count.
 - The large total counts each calendar day only once, even when ranges overlap.
 - Date math uses calendar dates in UTC, avoiding daylight-saving time errors.
+
+## California Penal Code § 4019 calculator
+
+The custody-credit section uses the unique inclusive-day total as the number of
+actual custody days. When the four-day commitment requirement is marked as
+satisfied, it applies the standard current § 4019 formula: two conduct-credit
+days for each complete two-day block of actual custody.
+
+Examples:
+
+- 4 actual days → 4 conduct days → 8 total credit days.
+- 5 actual days → 4 conduct days → 9 total credit days.
+- 6 actual days → 6 conduct days → 12 total credit days.
+
+The calculator does **not** determine whether § 4019 applies in a particular
+case. Other statutes can limit or eliminate conduct credits, and custody must
+otherwise qualify for presentence credit. The result should be independently
+verified before use in a case.
