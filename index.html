@@ -28,85 +28,108 @@
           </div>
         </header>
 
-        <div class="range-heading" aria-hidden="true">
-          <span>Date ranges</span>
-          <span>Days</span>
-        </div>
-
-        <div id="ranges" class="ranges" aria-label="Date ranges"></div>
-
-        <div class="range-actions">
-          <button id="add-range" class="add-button" type="button">
-            <span aria-hidden="true">+</span>
-            Add another range
-          </button>
-
-          <button id="reset-ranges" class="reset-button" type="button">
-            <span aria-hidden="true">↻</span>
-            Reset all
-          </button>
-        </div>
-
-        <section class="total-card" aria-labelledby="total-label">
-          <div>
-            <p id="total-label">Total unique days</p>
-            <p id="total-note" class="total-note">Add a complete range to see your total.</p>
-          </div>
-          <output id="grand-total" aria-live="polite" aria-atomic="true">0</output>
-        </section>
-
-        <section class="custody-card" aria-labelledby="custody-title">
-          <div class="custody-header">
+        <details class="tool-panel" open>
+          <summary class="tool-summary">
             <div>
-              <p class="eyebrow">California custody credits</p>
-              <h2 id="custody-title">Penal Code § 4019</h2>
-              <p class="custody-intro">
-                Uses the unique custody days above as actual days and applies the
-                standard two-for-two § 4019 conduct-credit formula.
+              <p class="eyebrow">Custody calculator</p>
+              <h2>Dates & Penal Code § 4019 Credits</h2>
+              <p>Count unique custody days and calculate standard § 4019 conduct credits.</p>
+            </div>
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <div class="range-heading" aria-hidden="true">
+              <span>Date ranges</span>
+              <span>Days</span>
+            </div>
+
+            <div id="ranges" class="ranges" aria-label="Date ranges"></div>
+
+            <div class="range-actions">
+              <button id="add-range" class="add-button" type="button">
+                <span aria-hidden="true">+</span>
+                Add another range
+              </button>
+
+              <button id="reset-ranges" class="reset-button" type="button">
+                <span aria-hidden="true">↻</span>
+                Reset all
+              </button>
+            </div>
+
+            <section class="total-card" aria-labelledby="total-label">
+              <div>
+                <p id="total-label">Total unique days</p>
+                <p id="total-note" class="total-note">Add a complete range to see your total.</p>
+              </div>
+              <output id="grand-total" aria-live="polite" aria-atomic="true">0</output>
+            </section>
+
+            <section class="custody-card" aria-labelledby="custody-title">
+              <div class="custody-header">
+                <div>
+                  <p class="eyebrow">California custody credits</p>
+                  <h2 id="custody-title">Penal Code § 4019</h2>
+                  <p class="custody-intro">
+                    Uses the unique custody days above as actual days and applies the
+                    standard two-for-two § 4019 conduct-credit formula.
+                  </p>
+                </div>
+              </div>
+
+              <label class="credit-check">
+                <input id="four-day-threshold" type="checkbox" checked />
+                <span>
+                  The § 4019 four-day commitment requirement is satisfied.
+                  <small>
+                    Uncheck this if the person is not committed for a period of four days or longer.
+                  </small>
+                </span>
+              </label>
+
+              <div class="credit-results" aria-live="polite" aria-atomic="true">
+                <div class="credit-stat">
+                  <span>Actual days</span>
+                  <output id="actual-credit-days">0</output>
+                </div>
+                <div class="credit-stat">
+                  <span>§ 4019 conduct</span>
+                  <output id="conduct-credit-days">0</output>
+                </div>
+                <div class="credit-stat credit-stat-total">
+                  <span>Total custody credit</span>
+                  <output id="total-credit-days">0</output>
+                </div>
+              </div>
+
+              <p id="credit-formula-note" class="formula-note">
+                Add a complete custody range to calculate credits.
               </p>
-            </div>
+
+              <aside class="legal-note">
+                <strong>Scope:</strong> This calculator assumes the standard § 4019
+                formula applies and all available conduct credits are earned. It does
+                not determine whether another statute limits or eliminates conduct
+                credit (for example, Penal Code §§ 2933.1 or 2933.2), whether particular
+                custody qualifies under § 2900.5, or whether credits were lost for
+                misconduct. Verify eligibility before relying on the result.
+              </aside>
+            </section>
+
           </div>
+        </details>
 
-          <label class="credit-check">
-            <input id="four-day-threshold" type="checkbox" checked />
-            <span>
-              The § 4019 four-day commitment requirement is satisfied.
-              <small>
-                Uncheck this if the person is not committed for a period of four days or longer.
-              </small>
-            </span>
-          </label>
-
-          <div class="credit-results" aria-live="polite" aria-atomic="true">
-            <div class="credit-stat">
-              <span>Actual days</span>
-              <output id="actual-credit-days">0</output>
+        <details class="tool-panel">
+          <summary class="tool-summary">
+            <div>
+              <p class="eyebrow">Firearm prohibition lookup</p>
+              <h2>Penal Code § 29805 Check</h2>
+              <p>Search by code section or common offense name.</p>
             </div>
-            <div class="credit-stat">
-              <span>§ 4019 conduct</span>
-              <output id="conduct-credit-days">0</output>
-            </div>
-            <div class="credit-stat credit-stat-total">
-              <span>Total custody credit</span>
-              <output id="total-credit-days">0</output>
-            </div>
-          </div>
-
-          <p id="credit-formula-note" class="formula-note">
-            Add a complete custody range to calculate credits.
-          </p>
-
-          <aside class="legal-note">
-            <strong>Scope:</strong> This calculator assumes the standard § 4019
-            formula applies and all available conduct credits are earned. It does
-            not determine whether another statute limits or eliminates conduct
-            credit (for example, Penal Code §§ 2933.1 or 2933.2), whether particular
-            custody qualifies under § 2900.5, or whether credits were lost for
-            misconduct. Verify eligibility before relying on the result.
-          </aside>
-        </section>
-
-        <section class="lookup-card" aria-labelledby="lookup-title">
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <section class="lookup-card" aria-labelledby="lookup-title">
           <p class="eyebrow">California firearm prohibition lookup</p>
           <h2 id="lookup-title">Penal Code § 29805</h2>
           <p class="lookup-intro">
@@ -155,9 +178,21 @@
               rel="noopener noreferrer"
             >View the official statute</a>.
           </p>
-        </section>
+            </section>
+          </div>
+        </details>
 
-        <section class="exposure-card" aria-labelledby="exposure-title">
+        <details class="tool-panel">
+          <summary class="tool-summary">
+            <div>
+              <p class="eyebrow">Misdemeanor quick reference</p>
+              <h2>Maximum Exposure Lookup</h2>
+              <p>Search common misdemeanor charges by section or offense name.</p>
+            </div>
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <section class="exposure-card" aria-labelledby="exposure-title">
           <p class="eyebrow">California misdemeanor sentencing</p>
           <h2 id="exposure-title">Maximum Exposure Lookup</h2>
           <p class="exposure-intro">
@@ -212,7 +247,9 @@
             change the result. Entries marked “varies” need additional facts or a subdivision.
             Statutory data checked against California Legislative Information in October 2026.
           </aside>
-        </section>
+            </section>
+          </div>
+        </details>
       </section>
     </main>
 
