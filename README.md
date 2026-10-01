@@ -1,9 +1,9 @@
-# Date Counter
+# Expediter Tool Kit
 
-A small, dependency-free browser app that counts inclusive calendar days across
-multiple date ranges. Overlapping dates are counted only once in the grand total.
-
-It also includes an optional California Penal Code § 4019 custody-credit calculator.
+A small, dependency-free browser toolkit for California criminal-law workflow.
+It includes inclusive date counting, Penal Code § 4019 custody credits, a Penal
+Code § 29805 firearm-prohibition lookup, and a growing misdemeanor exposure
+reference.
 
 ## Use it locally
 
