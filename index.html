@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Count the unique calendar days across multiple inclusive date ranges."
+      content="Count unique inclusive calendar days and estimate California Penal Code section 4019 custody credits."
     />
     <title>Date Counter</title>
     <link rel="stylesheet" href="styles.css" />
@@ -53,6 +53,57 @@
             <p id="total-note" class="total-note">Add a complete range to see your total.</p>
           </div>
           <output id="grand-total" aria-live="polite" aria-atomic="true">0</output>
+        </section>
+
+        <section class="custody-card" aria-labelledby="custody-title">
+          <div class="custody-header">
+            <div>
+              <p class="eyebrow">California custody credits</p>
+              <h2 id="custody-title">Penal Code § 4019</h2>
+              <p class="custody-intro">
+                Uses the unique custody days above as actual days and applies the
+                standard two-for-two § 4019 conduct-credit formula.
+              </p>
+            </div>
+          </div>
+
+          <label class="credit-check">
+            <input id="four-day-threshold" type="checkbox" checked />
+            <span>
+              The § 4019 four-day commitment requirement is satisfied.
+              <small>
+                Uncheck this if the person is not committed for a period of four days or longer.
+              </small>
+            </span>
+          </label>
+
+          <div class="credit-results" aria-live="polite" aria-atomic="true">
+            <div class="credit-stat">
+              <span>Actual days</span>
+              <output id="actual-credit-days">0</output>
+            </div>
+            <div class="credit-stat">
+              <span>§ 4019 conduct</span>
+              <output id="conduct-credit-days">0</output>
+            </div>
+            <div class="credit-stat credit-stat-total">
+              <span>Total custody credit</span>
+              <output id="total-credit-days">0</output>
+            </div>
+          </div>
+
+          <p id="credit-formula-note" class="formula-note">
+            Add a complete custody range to calculate credits.
+          </p>
+
+          <aside class="legal-note">
+            <strong>Scope:</strong> This calculator assumes the standard § 4019
+            formula applies and all available conduct credits are earned. It does
+            not determine whether another statute limits or eliminates conduct
+            credit (for example, Penal Code §§ 2933.1 or 2933.2), whether particular
+            custody qualifies under § 2900.5, or whether credits were lost for
+            misconduct. Verify eligibility before relying on the result.
+          </aside>
         </section>
       </section>
     </main>
