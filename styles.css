@@ -765,3 +765,127 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+
+.exposure-card {
+  margin-top: 28px;
+  padding: clamp(22px, 4vw, 30px);
+  background: #fbfaf6;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+
+.exposure-card h2 {
+  margin: 4px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  font-weight: 500;
+}
+
+.exposure-intro {
+  max-width: 740px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.exposure-result {
+  margin-top: 18px;
+  padding: 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.exposure-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.exposure-code {
+  margin: 0;
+  color: var(--green-dark);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.exposure-name {
+  margin: 5px 0 0;
+  color: var(--ink);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.exposure-badge {
+  flex: none;
+  padding: 6px 9px;
+  color: #2f6b52;
+  background: #e7f0ea;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.exposure-result[data-kind="varies"] .exposure-badge,
+.exposure-result[data-kind="unknown"] .exposure-badge {
+  color: #765f31;
+  background: #f4ecd8;
+}
+
+.exposure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.exposure-stat {
+  padding: 14px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.exposure-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.exposure-stat strong {
+  display: block;
+  margin-top: 7px;
+  color: var(--green-dark);
+  font-size: 1.18rem;
+}
+
+.exposure-note {
+  margin: 15px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.statute-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--green-dark);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .exposure-heading {
+    flex-direction: column;
+  }
+
+  .exposure-grid {
+    grid-template-columns: 1fr;
+  }
+}
