@@ -412,14 +412,16 @@ function renderLookupResult(kind, query, matchingRules, relatedRules = []) {
 }
 
 function lookupSection29805(rawValue) {
-  const query = normalizeCodeInput(rawValue);
+  const query =
+    normalizeCodeInput(rawValue) ||
+    resolveCommonNameToCode(rawValue, { allowedCodes: ["PC", "WIC"] });
 
   if (!query) {
     lookupResult.hidden = false;
     lookupResult.dataset.kind = "invalid";
     lookupIcon.textContent = "?";
-    lookupStatus.textContent = "Enter a code section";
-    lookupSummary.textContent = "Try 242, PC 242, Penal Code section 242, or 368(b).";
+    lookupStatus.textContent = "Enter a code section or common offense name";
+    lookupSummary.textContent = "Try 242, PC 242, battery, criminal threats, or 368(b).";
     showWhereButton.hidden = true;
     lookupDetails.hidden = true;
     return;
@@ -536,6 +538,125 @@ const MISDEMEANOR_EXPOSURE = [
   { code:"HS", section:"11377", name:"Possession of specified controlled substances", jail:"1 year", basis:"HSC § 11377(a)", law:"HSC", source:"11377", note:"Ordinary misdemeanor possession carries county jail not more than one year; specified serious/violent or registrable priors can permit felony punishment." },
 ];
 
+
+
+const COMMON_OFFENSE_ALIASES = [
+  { terms:["assault","simple assault"], code:"PC", section:"240" },
+  { terms:["battery","simple battery"], code:"PC", section:"242" },
+  { terms:["domestic battery","dv battery","domestic violence battery","spousal battery"], code:"PC", section:"243", subdivisions:["e","1"], exposureSection:"243(e)(1)" },
+  { terms:["battery on peace officer","battery on protected person"], code:"PC", section:"243", subdivisions:["b"], exposureSection:"243(b)" },
+  { terms:["battery causing serious bodily injury","serious bodily injury battery"], code:"PC", section:"243", subdivisions:["d"], exposureSection:"243(d)" },
+  { terms:["corporal injury","corporal injury spouse","corporal injury cohabitant","domestic violence corporal injury","dv corporal injury"], code:"PC", section:"273.5" },
+  { terms:["restraining order violation","protective order violation","violation of protective order","dv restraining order violation"], code:"PC", section:"273.6" },
+  { terms:["contempt protective order","stay away order violation","stay-away order violation"], code:"PC", section:"166", subdivisions:["c","1"], exposureSection:"166(c)(1)" },
+  { terms:["criminal threats","criminal threat","terrorist threats","terrorist threat"], code:"PC", section:"422" },
+  { terms:["brandishing","brandishing a weapon","brandishing weapon"], code:"PC", section:"417" },
+  { terms:["brandishing firearm","brandishing a firearm"], code:"PC", section:"417" },
+  { terms:["adw","assault with deadly weapon","assault with a deadly weapon"], code:"PC", section:"245", subdivisions:["a","1"], exposureSection:"245(a)(1)" },
+  { terms:["assault likely gbi","assault by means likely to produce great bodily injury","force likely gbi"], code:"PC", section:"245", subdivisions:["a","4"], exposureSection:"245(a)(4)" },
+  { terms:["shoplifting"], code:"PC", section:"459.5" },
+  { terms:["burglary tools","possession of burglary tools"], code:"PC", section:"466" },
+  { terms:["petty theft","theft"], code:"PC", section:"484" },
+  { terms:["grand theft"], code:"PC", section:"487" },
+  { terms:["receiving stolen property","rsp"], code:"PC", section:"496" },
+  { terms:["false personation","false impersonation"], code:"PC", section:"529" },
+  { terms:["mail theft"], code:"PC", section:"530.5", subdivisions:["e"], exposureSection:"530.5(e)" },
+  { terms:["defrauding an innkeeper","dine and dash"], code:"PC", section:"537", subdivisions:["a","1"], exposureSection:"537(a)(1)" },
+  { terms:["vandalism"], code:"PC", section:"594" },
+  { terms:["trespass","trespassing"], code:"PC", section:"602" },
+  { terms:["business interference","interference with business"], code:"PC", section:"602.1" },
+  { terms:["unauthorized entry dwelling","unauthorized entry into dwelling"], code:"PC", section:"602.5" },
+  { terms:["disorderly conduct"], code:"PC", section:"647" },
+  { terms:["concealed dirk or dagger","dirk or dagger"], code:"PC", section:"21310" },
+  { terms:["concealed firearm","carrying concealed firearm","carrying a concealed firearm"], code:"PC", section:"25400" },
+  { terms:["switchblade","switchblade knife"], code:"PC", section:"21510", subdivisions:["b"], exposureSection:"21510(b)" },
+  { terms:["child endangerment"], code:"PC", section:"273a" },
+  { terms:["elder abuse"], code:"PC", section:"368" },
+  { terms:["animal cruelty"], code:"PC", section:"597", subdivisions:["a"] },
+  { terms:["evading","evading a peace officer","misdemeanor evading"], code:"VC", section:"2800.1" },
+  { terms:["driving on suspended license","driving on a suspended license","suspended license","driving while suspended"], code:"VC", section:"14601" },
+  { terms:["hit and run property damage","property damage hit and run","misdemeanor hit and run"], code:"VC", section:"20002" },
+  { terms:["hit and run injury","injury hit and run","felony hit and run"], code:"VC", section:"20001" },
+  { terms:["speed contest","street racing","exhibition of speed"], code:"VC", section:"23109" },
+  { terms:["drug possession","possession controlled substance"], code:"HS", section:"11350" },
+  { terms:["meth possession","possession methamphetamine"], code:"HS", section:"11377" },
+  { terms:["marijuana possession","cannabis possession"], code:"HS", section:"11357" },
+  { terms:["drug paraphernalia","possession of drug paraphernalia","paraphernalia"], code:"HS", section:"11364" },
+  { terms:["under the influence drugs","under influence controlled substance","drug under the influence"], code:"HS", section:"11550" },
+];
+
+function normalizeCommonName(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function resolveCommonNameAlias(value, { allowedCodes = null } = {}) {
+  const normalized = normalizeCommonName(value);
+  if (!normalized) return null;
+
+  const matches = COMMON_OFFENSE_ALIASES
+    .filter((entry) => !allowedCodes || allowedCodes.includes(entry.code))
+    .filter((entry) =>
+      entry.terms.some((term) => {
+        const normalizedTerm = normalizeCommonName(term);
+        return normalized === normalizedTerm ||
+          normalized.includes(normalizedTerm) ||
+          normalizedTerm.includes(normalized);
+      }),
+    )
+    .sort((a, b) => {
+      const aBest = Math.max(...a.terms.map((term) => normalizeCommonName(term).length));
+      const bBest = Math.max(...b.terms.map((term) => normalizeCommonName(term).length));
+      return bBest - aBest;
+    });
+
+  return matches[0] || null;
+}
+
+function resolveCommonNameToCode(value, options = {}) {
+  const alias = resolveCommonNameAlias(value, options);
+  if (!alias) return null;
+
+  return {
+    code: alias.code,
+    section: alias.section,
+    subdivisions: alias.subdivisions || [],
+  };
+}
+
+function resolveCommonNameToExposure(value) {
+  const alias = resolveCommonNameAlias(value);
+  if (alias) {
+    const section = alias.exposureSection ||
+      alias.section + (alias.subdivisions || []).map((part) => "(" + part + ")").join("");
+
+    const exact = MISDEMEANOR_EXPOSURE.find(
+      (entry) => entry.code === alias.code && entry.section.toLowerCase() === section.toLowerCase(),
+    );
+    if (exact) return exact;
+
+    const broad = MISDEMEANOR_EXPOSURE.find(
+      (entry) => entry.code === alias.code && entry.section.toLowerCase() === alias.section.toLowerCase(),
+    );
+    if (broad) return broad;
+  }
+
+  const normalized = normalizeCommonName(value);
+  if (!normalized) return null;
+
+  const nameMatches = MISDEMEANOR_EXPOSURE
+    .filter((entry) => {
+      const name = normalizeCommonName(entry.name);
+      return name === normalized || name.includes(normalized) || normalized.includes(name);
+    })
+    .sort((a, b) => normalizeCommonName(a.name).length - normalizeCommonName(b.name).length);
+
+  return nameMatches[0] || null;
+}
+
 function normalizeExposureInput(value) {
   let text = value.trim().toLowerCase();
   if (!text) return null;
@@ -617,10 +738,21 @@ function renderExposure(entry, query) {
 
 exposureForm.addEventListener("submit", (event) => {
   event.preventDefault();
+
   const query = normalizeExposureInput(exposureLookup.value);
-  if (!query) {
-    renderExposure(null, null);
+  if (query) {
+    renderExposure(findExposureEntry(query), query);
     return;
   }
-  renderExposure(findExposureEntry(query), query);
+
+  const commonNameEntry = resolveCommonNameToExposure(exposureLookup.value);
+  if (commonNameEntry) {
+    renderExposure(commonNameEntry, {
+      code: commonNameEntry.code,
+      section: commonNameEntry.section,
+    });
+    return;
+  }
+
+  renderExposure(null, null);
 });
