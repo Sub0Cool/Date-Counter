@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Count the unique calendar days across multiple inclusive date ranges."
+    />
+    <title>Date Counter</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="counter-card" aria-labelledby="page-title">
+        <header class="hero">
+          <div class="calendar-mark" aria-hidden="true">
+            <span></span>
+            <strong>31</strong>
+          </div>
+          <div>
+            <p class="eyebrow">Inclusive date calculator</p>
+            <h1 id="page-title">Count every day that matters.</h1>
+            <p class="intro">
+              Add your date ranges below. Every start and end date is included,
+              and overlapping days are counted only once in the total.
+            </p>
+          </div>
+        </header>
+
+        <div class="range-heading" aria-hidden="true">
+          <span>Date ranges</span>
+          <span>Days</span>
+        </div>
+
+        <div id="ranges" class="ranges" aria-label="Date ranges"></div>
+
+        <div class="range-actions">
+          <button id="add-range" class="add-button" type="button">
+            <span aria-hidden="true">+</span>
+            Add another range
+          </button>
+
+          <button id="reset-ranges" class="reset-button" type="button">
+            <span aria-hidden="true">↻</span>
+            Reset all
+          </button>
+        </div>
+
+        <section class="total-card" aria-labelledby="total-label">
+          <div>
+            <p id="total-label">Total unique days</p>
+            <p id="total-note" class="total-note">Add a complete range to see your total.</p>
+          </div>
+          <output id="grand-total" aria-live="polite" aria-atomic="true">0</output>
+        </section>
+      </section>
+    </main>
+
+    <template id="range-template">
+      <div class="range-row">
+        <div class="range-number" aria-hidden="true"></div>
+
+        <div class="date-field">
+          <label>Start date</label>
+          <input class="start-date" type="date" />
+        </div>
+
+        <div class="date-arrow" aria-hidden="true">→</div>
+
+        <div class="date-field">
+          <label>End date</label>
+          <input class="end-date" type="date" />
+        </div>
+
+        <div class="range-result">
+          <output class="range-days">—</output>
+          <span class="range-days-label">days</span>
+        </div>
+
+        <button class="remove-button" type="button" aria-label="Remove date range">
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <p class="range-error" role="alert"></p>
+      </div>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
