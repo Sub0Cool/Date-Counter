@@ -43,3 +43,20 @@ The calculator does **not** determine whether § 4019 applies in a particular
 case. Other statutes can limit or eliminate conduct credits, and custody must
 otherwise qualify for presentence credit. The result should be independently
 verified before use in a case.
+
+
+## California Penal Code § 29805 lookup
+
+The app also includes a local lookup for offenses listed in the current text of
+Penal Code § 29805. The input is deliberately forgiving: examples such as
+`242`, `PC 242`, `Penal Code section 242`, `§ 242`, and `368(b)`
+are normalized before lookup.
+
+The lookup is subdivision-aware where § 29805 lists only part of a statute. It
+also displays the specific § 29805 subdivision and any conviction-date or factual
+condition reflected in the statute. A "not listed" result means only that the
+entered offense was not found in § 29805; it is not a determination that no
+other firearm prohibition applies.
+
+Statutory source: California Legislative Information, Penal Code § 29805,
+current text effective January 1, 2026.
