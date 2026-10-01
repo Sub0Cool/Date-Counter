@@ -1,16 +1,16 @@
 :root {
   color-scheme: light;
-  --ink: #17332d;
-  --muted: #62736f;
-  --green: #236b59;
-  --green-dark: #185346;
-  --mint: #dff3ec;
-  --mint-light: #f1faf6;
-  --line: #dce8e3;
-  --paper: #ffffff;
-  --background: #f2f6f3;
-  --error: #a43e3e;
-  --shadow: 0 24px 70px rgba(30, 66, 57, 0.12);
+  --ink: #1f2a3a;
+  --muted: #687180;
+  --green: #3f5873;
+  --green-dark: #273d57;
+  --mint: #e8e2d5;
+  --mint-light: #f7f4ed;
+  --line: #d9d5cc;
+  --paper: #fffdf8;
+  --background: #edf0f3;
+  --error: #8a3945;
+  --shadow: 0 24px 70px rgba(31, 42, 58, 0.14);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -26,8 +26,8 @@ body {
   margin: 0;
   color: var(--ink);
   background:
-    radial-gradient(circle at 12% 8%, rgba(197, 231, 218, 0.65), transparent 28rem),
-    radial-gradient(circle at 90% 92%, rgba(225, 237, 208, 0.7), transparent 30rem),
+    radial-gradient(circle at 12% 8%, rgba(210, 218, 229, 0.75), transparent 28rem),
+    radial-gradient(circle at 90% 92%, rgba(230, 222, 203, 0.72), transparent 30rem),
     var(--background);
 }
 
@@ -51,8 +51,8 @@ button {
   width: min(940px, 100%);
   padding: clamp(28px, 5vw, 56px);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 253, 248, 0.96);
+  border: 1px solid rgba(218, 213, 203, 0.92);
   border-radius: 28px;
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
@@ -147,8 +147,8 @@ h1 {
 }
 
 .range-row:focus-within {
-  border-color: #acd4c6;
-  box-shadow: 0 0 0 3px rgba(35, 107, 89, 0.08);
+  border-color: #9eacbb;
+  box-shadow: 0 0 0 3px rgba(63, 88, 115, 0.10);
 }
 
 .range-number {
@@ -193,7 +193,7 @@ h1 {
 
 .date-arrow {
   margin-top: 20px;
-  color: #85a39a;
+  color: #8b96a4;
   font-size: 1.1rem;
   text-align: center;
 }
@@ -237,7 +237,7 @@ h1 {
 .remove-button:hover,
 .remove-button:focus-visible {
   color: var(--error);
-  background: #f9e8e5;
+  background: #f4e7e9;
   outline: none;
 }
 
@@ -289,7 +289,7 @@ h1 {
 .add-button:hover,
 .add-button:focus-visible {
   background: var(--mint);
-  border-color: #c9e7dc;
+  border-color: #d2cbbb;
   outline: none;
 }
 
@@ -306,8 +306,8 @@ h1 {
 .reset-button:hover,
 .reset-button:focus-visible {
   color: var(--error);
-  background: #fdf3f1;
-  border-color: #e8c8c2;
+  background: #faf1f2;
+  border-color: #ddc3c8;
   outline: none;
 }
 
@@ -321,7 +321,7 @@ h1 {
   color: white;
   background: linear-gradient(135deg, var(--green-dark), var(--green));
   border-radius: 20px;
-  box-shadow: 0 16px 36px rgba(29, 91, 75, 0.2);
+  box-shadow: 0 16px 36px rgba(39, 61, 87, 0.22);
 }
 
 .total-card p {
@@ -469,7 +469,7 @@ h1 {
 .custody-card {
   margin-top: 28px;
   padding: clamp(22px, 4vw, 30px);
-  background: #fbfcfb;
+  background: #fbfaf6;
   border: 1px solid var(--line);
   border-radius: 20px;
 }
@@ -555,7 +555,7 @@ h1 {
 
 .credit-stat-total {
   background: var(--mint);
-  border-color: #c8e5da;
+  border-color: #d6cebd;
 }
 
 .formula-note {
@@ -588,7 +588,7 @@ h1 {
 .lookup-card {
   margin-top: 28px;
   padding: clamp(22px, 4vw, 30px);
-  background: #fbfcfb;
+  background: #fbfaf6;
   border: 1px solid var(--line);
   border-radius: 20px;
 }
@@ -638,7 +638,7 @@ h1 {
 
 .lookup-controls input:focus {
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(35, 107, 89, 0.08);
+  box-shadow: 0 0 0 3px rgba(63, 88, 115, 0.10);
 }
 
 .lookup-button,
@@ -688,20 +688,20 @@ h1 {
 }
 
 .lookup-result[data-kind="yes"] .lookup-icon {
-  color: #17624f;
-  background: #dff3ec;
+  color: #2f6b52;
+  background: #e7f0ea;
 }
 
 .lookup-result[data-kind="no"] .lookup-icon {
   color: var(--error);
-  background: #f9e8e5;
+  background: #f4e7e9;
 }
 
 .lookup-result[data-kind="conditional"] .lookup-icon,
 .lookup-result[data-kind="needs-info"] .lookup-icon,
 .lookup-result[data-kind="invalid"] .lookup-icon {
-  color: #72551c;
-  background: #f8efd6;
+  color: #765f31;
+  background: #f4ecd8;
 }
 
 .lookup-status {
@@ -720,7 +720,7 @@ h1 {
   margin-top: 14px;
   color: var(--green-dark);
   background: var(--mint-light);
-  border: 1px solid #c9e7dc;
+  border: 1px solid #d2cbbb;
 }
 
 .show-where-button:hover,
