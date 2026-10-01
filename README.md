@@ -78,3 +78,16 @@ to be expanded over time.
 This is a quick-reference tool, not a complete sentencing calculator. It does
 not automatically add enhancements, consecutive counts, probation conditions,
 or alternative felony punishment.
+
+
+## Probation eligibility and mandatory terms
+
+A separate probation lookup provides a quick-reference answer for common charges.
+It distinguishes general misdemeanor probation eligibility from offense-specific
+mandatory conditions. The initial special-rule set includes domestic battery,
+corporal injury, specified protective-order violations, child endangerment, and DUI.
+
+For other offenses already in the misdemeanor-exposure table, the tool provides
+a conservative general-probation result under Penal Code § 1203a and warns when
+no offense-specific rule has yet been loaded. The probation table is intended to
+grow over time and should not replace review of the governing sentencing statutes.
