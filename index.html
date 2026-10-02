@@ -5,55 +5,325 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Count the unique calendar days across multiple inclusive date ranges."
+      content="Count unique inclusive calendar days and estimate California Penal Code section 4019 custody credits."
     />
-    <title>Date Counter</title>
+    <title>Reference Desk</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="page-shell">
       <section class="counter-card" aria-labelledby="page-title">
         <header class="hero">
-          <div class="calendar-mark" aria-hidden="true">
-            <span></span>
-            <strong>31</strong>
+          <div class="reference-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" role="img">
+              <path d="M13 14h27a7 7 0 0 1 7 7v28H20a7 7 0 0 0-7 7V14Z"></path>
+              <path d="M20 49h31V21a7 7 0 0 0-7-7H20"></path>
+              <path d="M24 24h15M24 31h15M24 38h11"></path>
+            </svg>
           </div>
           <div>
-            <p class="eyebrow">Inclusive date calculator</p>
-            <h1 id="page-title">Count every day that matters.</h1>
+            <p class="eyebrow">California criminal-law utilities</p>
+            <h1 id="page-title">Reference Desk</h1>
             <p class="intro">
-              Add your date ranges below. Every start and end date is included,
-              and overlapping days are counted only once in the total.
+              Quick-reference tools for inclusive date counting, custody credits,
+              firearm-prohibition checks, misdemeanor exposure, and probation requirements.
             </p>
           </div>
         </header>
 
-        <div class="range-heading" aria-hidden="true">
-          <span>Date ranges</span>
-          <span>Days</span>
-        </div>
+        <details class="tool-panel" open>
+          <summary class="tool-summary">
+            <div>
+              <p class="eyebrow">Custody calculator</p>
+              <h2>Dates & Penal Code § 4019 Credits</h2>
+              <p>Count unique custody days and calculate standard § 4019 conduct credits.</p>
+            </div>
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <div class="range-heading" aria-hidden="true">
+              <span>Date ranges</span>
+              <span>Days</span>
+            </div>
 
-        <div id="ranges" class="ranges" aria-label="Date ranges"></div>
+            <div id="ranges" class="ranges" aria-label="Date ranges"></div>
 
-        <div class="range-actions">
-          <button id="add-range" class="add-button" type="button">
-            <span aria-hidden="true">+</span>
-            Add another range
-          </button>
+            <div class="range-actions">
+              <button id="add-range" class="add-button" type="button">
+                <span aria-hidden="true">+</span>
+                Add another range
+              </button>
 
-          <button id="reset-ranges" class="reset-button" type="button">
-            <span aria-hidden="true">↻</span>
-            Reset all
-          </button>
-        </div>
+              <button id="reset-ranges" class="reset-button" type="button">
+                <span aria-hidden="true">↻</span>
+                Reset all
+              </button>
+            </div>
 
-        <section class="total-card" aria-labelledby="total-label">
-          <div>
-            <p id="total-label">Total unique days</p>
-            <p id="total-note" class="total-note">Add a complete range to see your total.</p>
+            <section class="total-card" aria-labelledby="total-label">
+              <div>
+                <p id="total-label">Total unique days</p>
+                <p id="total-note" class="total-note">Add a complete range to see your total.</p>
+              </div>
+              <output id="grand-total" aria-live="polite" aria-atomic="true">0</output>
+            </section>
+
+            <section class="custody-card" aria-labelledby="custody-title">
+              <div class="custody-header">
+                <div>
+                  <p class="eyebrow">California custody credits</p>
+                  <h2 id="custody-title">Penal Code § 4019</h2>
+                  <p class="custody-intro">
+                    Uses the unique custody days above as actual days and applies the
+                    standard two-for-two § 4019 conduct-credit formula.
+                  </p>
+                </div>
+              </div>
+
+              <label class="credit-check">
+                <input id="four-day-threshold" type="checkbox" checked />
+                <span>
+                  The § 4019 four-day commitment requirement is satisfied.
+                  <small>
+                    Uncheck this if the person is not committed for a period of four days or longer.
+                  </small>
+                </span>
+              </label>
+
+              <div class="credit-results" aria-live="polite" aria-atomic="true">
+                <div class="credit-stat">
+                  <span>Actual days</span>
+                  <output id="actual-credit-days">0</output>
+                </div>
+                <div class="credit-stat">
+                  <span>§ 4019 conduct</span>
+                  <output id="conduct-credit-days">0</output>
+                </div>
+                <div class="credit-stat credit-stat-total">
+                  <span>Total custody credit</span>
+                  <output id="total-credit-days">0</output>
+                </div>
+              </div>
+
+              <p id="credit-formula-note" class="formula-note">
+                Add a complete custody range to calculate credits.
+              </p>
+
+              <aside class="legal-note">
+                <strong>Scope:</strong> This calculator assumes the standard § 4019
+                formula applies and all available conduct credits are earned. It does
+                not determine whether another statute limits or eliminates conduct
+                credit (for example, Penal Code §§ 2933.1 or 2933.2), whether particular
+                custody qualifies under § 2900.5, or whether credits were lost for
+                misconduct. Verify eligibility before relying on the result.
+              </aside>
+            </section>
+
           </div>
-          <output id="grand-total" aria-live="polite" aria-atomic="true">0</output>
-        </section>
+        </details>
+
+        <details class="tool-panel">
+          <summary class="tool-summary">
+            <div>
+              <p class="eyebrow">Firearm prohibition lookup</p>
+              <h2>Penal Code § 29805 Check</h2>
+              <p>Search by code section or common offense name.</p>
+            </div>
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <section class="lookup-card" aria-labelledby="lookup-title">
+          <p class="eyebrow">California firearm prohibition lookup</p>
+          <h2 id="lookup-title">Penal Code § 29805</h2>
+          <p class="lookup-intro">
+            Enter a Penal Code section to see whether it appears in the current text of § 29805.
+            Flexible formats and common offense names are accepted, including <strong>242</strong>, <strong>PC 242</strong>,
+            <strong>battery</strong>, <strong>criminal threats</strong>, and subdivision-specific entries such as
+            <strong>368(b)</strong>.
+          </p>
+
+          <form id="lookup-form" class="lookup-form">
+            <label for="code-lookup">Code section</label>
+            <div class="lookup-controls">
+              <input
+                id="code-lookup"
+                type="text"
+                autocomplete="off"
+                placeholder="e.g., PC 242, battery, or 368(b)"
+              />
+              <button type="submit" class="lookup-button">Check § 29805</button>
+            </div>
+          </form>
+
+          <div id="lookup-result" class="lookup-result" hidden aria-live="polite">
+            <div class="lookup-status-row">
+              <span id="lookup-icon" class="lookup-icon" aria-hidden="true"></span>
+              <div>
+                <p id="lookup-status" class="lookup-status"></p>
+                <p id="lookup-summary" class="lookup-summary"></p>
+              </div>
+            </div>
+
+            <button id="show-where" class="show-where-button" type="button" hidden>
+              Show where in § 29805
+            </button>
+
+            <div id="lookup-details" class="lookup-details" hidden></div>
+          </div>
+
+          <p class="lookup-source">
+            Based on the California Legislative Information text of Penal Code § 29805,
+            effective January 1, 2026. A “not listed” result means only that the entered
+            offense was not found in § 29805; other firearm prohibitions may still apply.
+            <a
+              href="https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=PEN&sectionNum=29805."
+              target="_blank"
+              rel="noopener noreferrer"
+            >View the official statute</a>.
+          </p>
+            </section>
+          </div>
+        </details>
+
+        <details class="tool-panel">
+          <summary class="tool-summary">
+            <div>
+              <p class="eyebrow">Misdemeanor quick reference</p>
+              <h2>Maximum Exposure Lookup</h2>
+              <p>Search common misdemeanor charges by section or offense name.</p>
+            </div>
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <section class="exposure-card" aria-labelledby="exposure-title">
+          <p class="eyebrow">California misdemeanor sentencing</p>
+          <h2 id="exposure-title">Maximum Exposure Lookup</h2>
+          <p class="exposure-intro">
+            Enter a Penal Code, Vehicle Code, or Health and Safety Code section.
+            Flexible formats and common names work — for example <strong>PC 242</strong>,
+            <strong>battery</strong>, <strong>hit and run</strong>, or <strong>drug paraphernalia</strong>.
+          </p>
+
+          <form id="exposure-form" class="lookup-form">
+            <label for="exposure-lookup">Offense</label>
+            <div class="lookup-controls">
+              <input
+                id="exposure-lookup"
+                type="text"
+                autocomplete="off"
+                placeholder="e.g., PC 242, battery, or hit and run"
+              />
+              <button type="submit" class="lookup-button">Check exposure</button>
+            </div>
+          </form>
+
+          <div id="exposure-result" class="exposure-result" hidden aria-live="polite">
+            <div class="exposure-heading">
+              <div>
+                <p id="exposure-code" class="exposure-code"></p>
+                <p id="exposure-name" class="exposure-name"></p>
+              </div>
+              <span id="exposure-badge" class="exposure-badge"></span>
+            </div>
+
+            <div class="exposure-grid">
+              <div class="exposure-stat">
+                <span>Maximum misdemeanor jail</span>
+                <strong id="exposure-jail">—</strong>
+              </div>
+              <div class="exposure-stat">
+                <span>Statutory basis</span>
+                <strong id="exposure-basis">—</strong>
+              </div>
+            </div>
+
+            <p id="exposure-note" class="exposure-note"></p>
+            <a id="exposure-source" class="statute-link" target="_blank" rel="noopener noreferrer">
+              View governing statute
+            </a>
+          </div>
+
+          <aside class="legal-note">
+            <strong>Scope:</strong> This is a quick misdemeanor jail-exposure reference, not a
+            complete sentencing calculation. Priors, enhancements, multiple counts, mandatory
+            minimums, probation conditions, alternative felony punishment, and other statutes may
+            change the result. Entries marked “varies” need additional facts or a subdivision.
+            Statutory data checked against California Legislative Information in October 2026.
+          </aside>
+            </section>
+          </div>
+        </details>
+
+        <details class="tool-panel">
+          <summary class="tool-summary">
+            <div>
+              <p class="eyebrow">Sentencing quick reference</p>
+              <h2>Probation Eligibility & Mandatory Terms</h2>
+              <p>Check whether probation is generally available and flag mandatory offense-specific conditions.</p>
+            </div>
+            <span class="tool-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="tool-panel-body">
+            <section class="probation-card" aria-labelledby="probation-title">
+              <p class="eyebrow">California misdemeanor probation</p>
+              <h2 id="probation-title">Probation Lookup</h2>
+              <p class="probation-intro">
+                Search by code section or common offense name. The result distinguishes general
+                probation eligibility from mandatory conditions that apply if probation is granted.
+              </p>
+
+              <form id="probation-form" class="lookup-form">
+                <label for="probation-lookup">Offense</label>
+                <div class="lookup-controls">
+                  <input
+                    id="probation-lookup"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="e.g., PC 243(e)(1), domestic battery, or DUI"
+                  />
+                  <button type="submit" class="lookup-button">Check probation</button>
+                </div>
+              </form>
+
+              <div id="probation-result" class="probation-result" hidden aria-live="polite">
+                <div class="probation-heading">
+                  <div>
+                    <p id="probation-code" class="exposure-code"></p>
+                    <p id="probation-name" class="exposure-name"></p>
+                  </div>
+                  <span id="probation-badge" class="exposure-badge"></span>
+                </div>
+
+                <div class="probation-grid">
+                  <div class="probation-stat">
+                    <span>Probation</span>
+                    <strong id="probation-status">—</strong>
+                  </div>
+                  <div class="probation-stat">
+                    <span>Term</span>
+                    <strong id="probation-term">—</strong>
+                  </div>
+                </div>
+
+                <div id="probation-terms-wrap" class="probation-terms-wrap">
+                  <p class="probation-terms-title">Mandatory / notable terms</p>
+                  <ul id="probation-terms" class="probation-terms"></ul>
+                </div>
+
+                <p id="probation-note" class="probation-note"></p>
+                <div id="probation-links" class="probation-links"></div>
+              </div>
+
+              <aside class="legal-note">
+                <strong>Scope:</strong> This is a quick-reference aid, not a complete probation
+                eligibility analysis. General misdemeanor probation authority is in Penal Code
+                § 1203a, but offense-specific statutes, priors, enhancements, victim relationship,
+                and case facts can change eligibility or required terms. Verify the governing
+                statutes before relying on the result.
+              </aside>
+            </section>
+          </div>
+        </details>
       </section>
     </main>
 
@@ -86,6 +356,8 @@
       </div>
     </template>
 
+    <script src="data/offenses.js"></script>
+    <script src="data/section-29805.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
