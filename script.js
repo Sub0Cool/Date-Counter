@@ -827,6 +827,98 @@ probationForm.addEventListener("submit", (event) => {
 });
 
 
+// Future Date Calculator
+const futureDateForm = document.querySelector("#future-date-form");
+const futureDateInput = document.querySelector("#future-date-input");
+const futureDateToday = document.querySelector("#future-date-today");
+const futureDateResult = document.querySelector("#future-date-result");
+const futureDateOutput = document.querySelector("#future-date-output");
+const futureDateSummary = document.querySelector("#future-date-summary");
+const futureDateError = document.querySelector("#future-date-error");
+
+function localCalendarToday() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function formatCalendarDate(date) {
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function addCalendarMonths(date, months) {
+  const originalDay = date.getDate();
+  const target = new Date(date.getFullYear(), date.getMonth() + months, 1);
+  const lastDay = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  target.setDate(Math.min(originalDay, lastDay));
+  return target;
+}
+
+function parseFutureOffset(value) {
+  let normalized = value.trim().toLowerCase();
+  normalized = normalized.replace(/^in\s+/, "").replace(/\s+from\s+(today|now)$/, "");
+
+  const match = normalized.match(
+    /^(\d+)\s*(d|day|days|w|week|weeks|mo|mos|month|months|y|yr|yrs|year|years)$/
+  );
+  if (!match) return null;
+
+  const amount = Number(match[1]);
+  if (!Number.isSafeInteger(amount) || amount < 0) return null;
+
+  const unit = match[2];
+  if (["d", "day", "days"].includes(unit)) return { amount, unit: "day" };
+  if (["w", "week", "weeks"].includes(unit)) return { amount, unit: "week" };
+  if (["mo", "mos", "month", "months"].includes(unit)) return { amount, unit: "month" };
+  return { amount, unit: "year" };
+}
+
+function calculateFutureDate(start, offset) {
+  if (offset.unit === "month") return addCalendarMonths(start, offset.amount);
+  if (offset.unit === "year") return addCalendarMonths(start, offset.amount * 12);
+
+  const result = new Date(start);
+  result.setDate(result.getDate() + offset.amount * (offset.unit === "week" ? 7 : 1));
+  return result;
+}
+
+function updateFutureDateToday() {
+  futureDateToday.textContent = formatCalendarDate(localCalendarToday());
+}
+
+if (futureDateForm) {
+  updateFutureDateToday();
+
+  futureDateForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const offset = parseFutureOffset(futureDateInput.value);
+    futureDateError.hidden = true;
+    futureDateResult.hidden = true;
+
+    if (!offset) {
+      futureDateError.textContent =
+        "Enter a whole number followed by days, weeks, months, or years — for example, “10 days” or “6 months.”";
+      futureDateError.hidden = false;
+      return;
+    }
+
+    const today = localCalendarToday();
+    const result = calculateFutureDate(today, offset);
+    const unitLabel = offset.amount === 1 ? offset.unit : offset.unit + "s";
+
+    futureDateOutput.textContent = formatCalendarDate(result);
+    futureDateSummary.textContent =
+      offset.amount + " " + unitLabel + " from " + formatCalendarDate(today) + ".";
+    futureDateResult.hidden = false;
+  });
+}
+
+
 // Reference Desk dashboard navigation.
 const toolTiles = [...document.querySelectorAll("[data-tool-target]")];
 const toolViews = [...document.querySelectorAll("[data-tool-view]")];
@@ -834,6 +926,7 @@ const activeToolTitle = document.querySelector("#active-tool-title");
 
 const toolTitles = {
   dates: "Dates & Penal Code § 4019 Credits",
+  "future-date": "Future Date Calculator",
   exposure: "Maximum Exposure Lookup",
   probation: "Probation Eligibility & Mandatory Terms",
   firearms: "Penal Code § 29805 Check",
