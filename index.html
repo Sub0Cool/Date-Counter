@@ -25,8 +25,8 @@
             <p class="eyebrow">California criminal-law utilities</p>
             <h1 id="page-title">Reference Desk</h1>
             <p class="intro">
-              Quick-reference tools for inclusive date counting, custody credits,
-              firearm-prohibition checks, misdemeanor exposure, and probation requirements.
+              Quick-reference tools for custody credits, misdemeanor exposure, probation,
+              firearm-prohibition checks, and blood alcohol estimation.
             </p>
           </div>
         </header>
@@ -77,6 +77,18 @@
               <span class="tool-tile-kicker">Firearms</span>
               <strong>Penal Code § 29805</strong>
               <small>Check whether an offense appears in the current § 29805 list.</small>
+            </span>
+            <span class="tool-tile-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="tool-tile" type="button" data-tool-target="bac" aria-pressed="false">
+            <span class="tool-tile-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32"><path d="M12 5h8M14 5v7l-5 9a4 4 0 0 0 3.5 6h7a4 4 0 0 0 3.5-6l-5-9V5"></path><path d="M11 20h10"></path></svg>
+            </span>
+            <span class="tool-tile-copy">
+              <span class="tool-tile-kicker">Forensic toxicology</span>
+              <strong>Blood Alcohol Estimator</strong>
+              <small>Retrograde BAC estimates and theoretical maximum BAC from reported drinking.</small>
             </span>
             <span class="tool-tile-arrow" aria-hidden="true">→</span>
           </button>
@@ -348,6 +360,215 @@
             </section>
           </div>
         </section>
+
+        <section class="tool-panel tool-view" id="tool-bac" data-tool-view="bac" hidden>
+          <div class="tool-panel-body">
+            <section class="bac-card" aria-labelledby="bac-title">
+              <p class="eyebrow">Forensic toxicology</p>
+              <h2 id="bac-title">Blood Alcohol Estimator</h2>
+              <p class="bac-intro">
+                Estimate an earlier blood alcohol concentration or the theoretical maximum BAC
+                from a reported drinking history. Results are ranges based on ANSI/ASB BPR 122
+                and should not be treated as an exact measurement or expert opinion.
+              </p>
+
+              <div class="bac-mode-tabs" role="tablist" aria-label="Blood alcohol estimator mode">
+                <button class="bac-mode-button is-active" type="button" data-bac-mode="retrograde" aria-selected="true">
+                  Retrograde BAC Estimate
+                </button>
+                <button class="bac-mode-button" type="button" data-bac-mode="maximum" aria-selected="false">
+                  Theoretical Maximum BAC
+                </button>
+              </div>
+
+              <section class="bac-mode-panel" data-bac-panel="retrograde">
+                <form id="retrograde-form" class="bac-form">
+                  <div class="bac-form-grid">
+                    <label>
+                      <span>Measured BAC / alcohol concentration</span>
+                      <input id="retro-bac" type="number" min="0" max="1" step="0.001" placeholder="e.g., 0.082" required />
+                      <small>Enter g/dL for blood/serum/plasma or g/210 L for breath.</small>
+                    </label>
+
+                    <label>
+                      <span>Specimen / result type</span>
+                      <select id="retro-specimen">
+                        <option value="blood">Whole blood</option>
+                        <option value="breath">Breath</option>
+                        <option value="serum">Serum</option>
+                        <option value="plasma">Plasma</option>
+                        <option value="urine">Urine</option>
+                      </select>
+                    </label>
+
+                    <label>
+                      <span>Test / draw time</span>
+                      <input id="retro-test-time" type="datetime-local" required />
+                    </label>
+
+                    <label>
+                      <span>Earlier target time</span>
+                      <input id="retro-target-time" type="datetime-local" required />
+                      <small>For example, the time of driving or incident.</small>
+                    </label>
+
+                    <label>
+                      <span>Reported last-drink time (optional)</span>
+                      <input id="retro-last-drink" type="datetime-local" />
+                    </label>
+
+                  </div>
+
+                  <aside class="bac-assumption-note" aria-label="Absorption assumption">
+                    <strong>Absorption assumption</strong>
+                    <p>
+                      Reference Desk infers whether post-absorptive status can reasonably be assumed
+                      from the reported last-drink time. If no last-drink time is provided, the
+                      calculation will not assume absorption was complete.
+                    </p>
+                  </aside>
+
+                  <button class="lookup-button bac-submit" type="submit">Calculate retrograde estimate</button>
+                </form>
+
+                <div id="retro-result" class="bac-result" hidden aria-live="polite">
+                  <div class="bac-result-heading">
+                    <div>
+                      <p class="eyebrow">Estimated earlier concentration</p>
+                      <strong id="retro-range" class="bac-range">—</strong>
+                    </div>
+                    <button class="method-badge" type="button" data-method-definition="retrograde">
+                      ASB 122 — Retrograde extrapolation
+                    </button>
+                  </div>
+
+                  <p id="retro-quality" class="estimate-quality"></p>
+                  <div id="retro-warning" class="bac-warning" hidden></div>
+
+                  <details class="calculation-details">
+                    <summary>How this result was calculated</summary>
+                    <div id="retro-calculation" class="calculation-copy"></div>
+                  </details>
+                </div>
+              </section>
+
+              <section class="bac-mode-panel" data-bac-panel="maximum" hidden>
+                <form id="maximum-bac-form" class="bac-form">
+                  <div class="bac-form-grid">
+                    <label>
+                      <span>Weight (lb)</span>
+                      <input id="max-weight" type="number" min="1" step="0.1" required />
+                    </label>
+
+                    <label>
+                      <span>Sex assigned at birth (optional)</span>
+                      <select id="max-sex">
+                        <option value="unknown">Unknown / not provided</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </select>
+                    </label>
+
+                    <label>
+                      <span>Age (optional)</span>
+                      <input id="max-age" type="number" min="1" max="120" step="1" />
+                      <small>Required for individualized male Vd.</small>
+                    </label>
+
+                    <label>
+                      <span>Height (inches, optional)</span>
+                      <input id="max-height" type="number" min="1" step="0.1" placeholder="e.g., 71" />
+                    </label>
+
+                    <label>
+                      <span>Reported last-drink time (optional)</span>
+                      <input id="max-last-drink" type="datetime-local" />
+                      <small>Used to place the reported drinking history in time.</small>
+                    </label>
+
+                    <label>
+                      <span>Observed BAC / alcohol concentration (optional)</span>
+                      <input id="max-observed-bac" type="number" min="0" max="1" step="0.001" placeholder="e.g., 0.170" />
+                    </label>
+
+                    <label>
+                      <span>Observed result type</span>
+                      <select id="max-observed-specimen">
+                        <option value="blood">Whole blood</option>
+                        <option value="breath">Breath</option>
+                        <option value="serum">Serum</option>
+                        <option value="plasma">Plasma</option>
+                      </select>
+                    </label>
+
+                    <label>
+                      <span>Observed test / draw time (optional)</span>
+                      <input id="max-observed-time" type="datetime-local" />
+                    </label>
+                  </div>
+
+                  <div class="drink-list-heading">
+                    <div>
+                      <p class="eyebrow">Reported drinking</p>
+                      <h3>Beverages</h3>
+                    </div>
+                    <button id="add-drink" class="add-button" type="button"><span aria-hidden="true">+</span>Add beverage</button>
+                  </div>
+
+                  <div id="drink-rows" class="drink-rows"></div>
+
+                  <button class="lookup-button bac-submit" type="submit">Calculate theoretical maximum</button>
+                </form>
+
+                <div id="maximum-bac-result" class="bac-result" hidden aria-live="polite">
+                  <div class="bac-result-heading">
+                    <div>
+                      <p class="eyebrow">Theoretical maximum BAC</p>
+                      <strong id="maximum-bac-range" class="bac-range">—</strong>
+                    </div>
+                    <button id="maximum-method-badge" class="method-badge" type="button" data-method-definition="fixed">
+                      ASB 122 — Fixed Vd
+                    </button>
+                  </div>
+
+                  <p id="maximum-quality" class="estimate-quality"></p>
+                  <div id="maximum-warning" class="bac-warning" hidden></div>
+
+                  <div class="bac-result-grid">
+                    <div class="bac-stat">
+                      <span>Total ethanol</span>
+                      <strong id="maximum-ethanol">—</strong>
+                    </div>
+                    <div class="bac-stat">
+                      <span>Vd range</span>
+                      <strong id="maximum-vd">—</strong>
+                    </div>
+                  </div>
+
+                  <div id="maximum-comparison" class="bac-comparison" hidden>
+                    <p class="eyebrow">Observed-result comparison</p>
+                    <strong id="maximum-comparison-status"></strong>
+                    <p id="maximum-comparison-copy"></p>
+                  </div>
+
+                  <details class="calculation-details">
+                    <summary>How this result was calculated</summary>
+                    <div id="maximum-calculation" class="calculation-copy"></div>
+                  </details>
+                </div>
+              </section>
+
+              <aside class="legal-note">
+                <strong>Methodology:</strong> ANSI/ASB Best Practice Recommendation 122, First Edition, 2024.
+                Retrograde extrapolation uses a 0.010–0.025 g/dL/hour elimination range and is not
+                performed below 0.020 g/dL or from urine results. Theoretical maximum BAC assumes
+                complete absorption and no alcohol elimination.
+                <a href="https://www.aafs.org/asb-standard/best-practice-recommendation-performing-alcohol-calculations-forensic-toxicology"
+                   target="_blank" rel="noopener noreferrer">View the ASB source</a>.
+              </aside>
+            </section>
+          </div>
+        </section>
       </section>
     </main>
 
@@ -380,6 +601,43 @@
       </div>
     </template>
 
+
+    <template id="drink-row-template">
+      <div class="drink-row">
+        <label>
+          <span>Beverage</span>
+          <input class="drink-name" type="text" placeholder="e.g., beer" />
+        </label>
+        <label>
+          <span>Volume (oz)</span>
+          <input class="drink-volume" type="number" min="0.1" step="0.1" value="12" required />
+        </label>
+        <label>
+          <span>ABV (%)</span>
+          <input class="drink-abv" type="number" min="0.1" max="100" step="0.1" value="5" required />
+        </label>
+        <label>
+          <span>Quantity</span>
+          <input class="drink-quantity" type="number" min="0.1" step="0.1" value="1" required />
+        </label>
+        <button class="remove-drink" type="button" aria-label="Remove beverage">×</button>
+      </div>
+    </template>
+
+    <dialog id="method-dialog" class="method-dialog">
+      <form method="dialog">
+        <button class="method-dialog-close" type="submit" aria-label="Close">×</button>
+      </form>
+      <p class="eyebrow">Calculation method</p>
+      <h2 id="method-dialog-title"></h2>
+      <p id="method-dialog-body"></p>
+      <p class="method-dialog-source">
+        <a href="https://www.aafs.org/asb-standard/best-practice-recommendation-performing-alcohol-calculations-forensic-toxicology"
+           target="_blank" rel="noopener noreferrer">ANSI/ASB BPR 122 source</a>
+      </p>
+    </dialog>
+
+    <script src="data/bac-methods.js"></script>
     <script src="data/offenses.js"></script>
     <script src="data/section-29805.js"></script>
     <script src="script.js"></script>

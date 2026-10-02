@@ -791,6 +791,7 @@ const toolTitles = {
   exposure: "Maximum Exposure Lookup",
   probation: "Probation Eligibility & Mandatory Terms",
   firearms: "Penal Code § 29805 Check",
+  bac: "Blood Alcohol Estimator",
 };
 
 function showTool(toolName) {
@@ -816,3 +817,444 @@ toolTiles.forEach((tile) => {
 });
 
 showTool("dates");
+
+
+// Blood Alcohol Estimator
+const BAC_METHODS = window.REFERENCE_DESK_BAC_METHODS;
+const bacModeButtons = [...document.querySelectorAll("[data-bac-mode]")];
+const bacModePanels = [...document.querySelectorAll("[data-bac-panel]")];
+const methodDialog = document.querySelector("#method-dialog");
+const methodDialogTitle = document.querySelector("#method-dialog-title");
+const methodDialogBody = document.querySelector("#method-dialog-body");
+
+function setBacMode(mode) {
+  bacModeButtons.forEach((button) => {
+    const active = button.dataset.bacMode === mode;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+
+  bacModePanels.forEach((panel) => {
+    panel.hidden = panel.dataset.bacPanel !== mode;
+  });
+}
+
+bacModeButtons.forEach((button) => {
+  button.addEventListener("click", () => setBacMode(button.dataset.bacMode));
+});
+
+document.addEventListener("click", (event) => {
+  const badge = event.target.closest("[data-method-definition]");
+  if (!badge || !methodDialog || !BAC_METHODS) return;
+
+  const definition = BAC_METHODS.definitions[badge.dataset.methodDefinition];
+  if (!definition) return;
+
+  methodDialogTitle.textContent = definition.title;
+  methodDialogBody.textContent = definition.body;
+  methodDialog.showModal();
+});
+
+function hoursBetween(earlier, later) {
+  return (later.getTime() - earlier.getTime()) / 3600000;
+}
+
+function fmt(value, digits = 3) {
+  return Number(value).toFixed(digits);
+}
+
+function renderParagraphs(container, lines) {
+  container.replaceChildren();
+  lines.forEach((line) => {
+    const p = document.createElement("p");
+    p.textContent = line;
+    container.append(p);
+  });
+}
+
+const retrogradeForm = document.querySelector("#retrograde-form");
+const retroResult = document.querySelector("#retro-result");
+const retroRange = document.querySelector("#retro-range");
+const retroQuality = document.querySelector("#retro-quality");
+const retroWarning = document.querySelector("#retro-warning");
+const retroCalculation = document.querySelector("#retro-calculation");
+
+retrogradeForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const c = BAC_METHODS.constants;
+  const measured = Number(document.querySelector("#retro-bac").value);
+  const specimen = document.querySelector("#retro-specimen").value;
+  const testTime = new Date(document.querySelector("#retro-test-time").value);
+  const targetTime = new Date(document.querySelector("#retro-target-time").value);
+  const lastDrinkRaw = document.querySelector("#retro-last-drink").value;
+  const lastDrink = lastDrinkRaw ? new Date(lastDrinkRaw) : null;
+  const postStatus = document.querySelector("#retro-post-absorptive").value;
+
+  retroResult.hidden = false;
+  retroWarning.hidden = true;
+  retroWarning.textContent = "";
+
+  if (!Number.isFinite(measured) || measured < c.retrogradeMinimumAc) {
+    retroRange.textContent = "Not calculated";
+    retroQuality.textContent = "ASB 122 does not recommend retrograde extrapolation below 0.020 g/dL.";
+    renderParagraphs(retroCalculation, ["No estimate was produced."]);
+    return;
+  }
+
+  if (specimen === "urine") {
+    retroRange.textContent = "Not calculated";
+    retroQuality.textContent = "Urine alcohol results are not amenable to retrograde extrapolation under ASB 122.";
+    renderParagraphs(retroCalculation, ["No estimate was produced from the urine result."]);
+    return;
+  }
+
+  if (Number.isNaN(testTime.getTime()) || Number.isNaN(targetTime.getTime()) || targetTime >= testTime) {
+    retroRange.textContent = "Check times";
+    retroQuality.textContent = "The target time must be earlier than the test or draw time.";
+    renderParagraphs(retroCalculation, ["No estimate was produced."]);
+    return;
+  }
+
+  const elapsed = hoursBetween(targetTime, testTime);
+  let testLow = measured;
+  let testHigh = measured;
+  let conversionLine = "No specimen conversion was required.";
+
+  if (specimen === "serum" || specimen === "plasma") {
+    testLow = measured / c.serumPlasmaRatioMax;
+    testHigh = measured / c.serumPlasmaRatioMin;
+    conversionLine =
+      "The reported " + specimen + " value was converted to a whole-blood-equivalent range using serum/plasma-to-blood ratios of " +
+      c.serumPlasmaRatioMin + "–" + c.serumPlasmaRatioMax + ".";
+
+    if (testLow < c.retrogradeMinimumAc) {
+      retroRange.textContent = "Not calculated";
+      retroQuality.textContent = "The converted whole-blood-equivalent range extends below 0.020 g/dL.";
+      renderParagraphs(retroCalculation, [
+        conversionLine,
+        "ASB 122 does not recommend retrograde extrapolation below 0.020 g/dL, so no estimate was produced."
+      ]);
+      return;
+    }
+  }
+
+  const low = testLow + c.eliminationRateMin * elapsed;
+  const high = testHigh + c.eliminationRateMax * elapsed;
+
+  const unit = specimen === "breath" ? "g/210 L" : "g/dL";
+  retroRange.textContent = fmt(low) + "–" + fmt(high) + " " + unit;
+
+  let quality = "Estimate quality: Limited — absorption status not established.";
+  let absorptionStatus = "Post-absorptive status NOT assumed.";
+  const warnings = [];
+
+  if (lastDrink) {
+    const targetSinceDrink = hoursBetween(lastDrink, targetTime);
+
+    if (targetSinceDrink >= 2) {
+      quality = "Estimate quality: Standard range — reported drinking cessation was at least 2 hours before the target time.";
+      absorptionStatus = "Post-absorptive status ASSUMED based on the reported last drink occurring at least 2 hours before the target time.";
+    } else if (targetSinceDrink >= 0) {
+      absorptionStatus = "Post-absorptive status NOT assumed because the reported last drink was less than 2 hours before the target time.";
+      warnings.push("Continued absorption may still have been occurring at the target time. The displayed range is the mathematical post-absorptive extrapolation and should be interpreted with this limitation.");
+    } else {
+      absorptionStatus = "Post-absorptive status NOT assumed because the reported last-drink time is after the target time.";
+      warnings.push("The reported last-drink time is after the target time, indicating possible post-incident drinking or an inconsistent timeline.");
+    }
+  } else {
+    warnings.push("No last-drink time was provided. ASB 122 states that when drinking history is unknown, it is not reasonable to assume the subject was post-absorptive.");
+  }
+
+  retroQuality.textContent = quality + " " + absorptionStatus;
+  if (warnings.length) {
+    retroWarning.hidden = false;
+    retroWarning.textContent = warnings.join(" ");
+  }
+
+  renderParagraphs(retroCalculation, [
+    "Measured result: " + fmt(measured) + " " + unit + ".",
+    conversionLine,
+    "Elapsed time: " + elapsed.toFixed(2) + " hours.",
+    "Elimination-rate range: " + c.eliminationRateMin.toFixed(3) + "–" + c.eliminationRateMax.toFixed(3) + " g/dL/hour.",
+    "Absorption assumption: " + absorptionStatus,
+    "Equation: earlier concentration = test concentration + (elimination rate × elapsed time).",
+    "Estimated earlier concentration: " + fmt(low) + "–" + fmt(high) + " " + unit + "."
+  ]);
+});
+
+const drinkRows = document.querySelector("#drink-rows");
+const drinkTemplate = document.querySelector("#drink-row-template");
+const addDrinkButton = document.querySelector("#add-drink");
+
+function addDrinkRow() {
+  const row = drinkTemplate.content.firstElementChild.cloneNode(true);
+  drinkRows.append(row);
+}
+
+addDrinkButton.addEventListener("click", addDrinkRow);
+drinkRows.addEventListener("click", (event) => {
+  const remove = event.target.closest(".remove-drink");
+  if (!remove) return;
+  if (drinkRows.children.length === 1) return;
+  remove.closest(".drink-row").remove();
+});
+addDrinkRow();
+
+function getVdEstimate(sex, weightKg, heightIn, age) {
+  const c = BAC_METHODS.constants;
+
+  if (sex === "male" && heightIn && age) {
+    const heightCm = heightIn * c.cmPerIn;
+    const tbw = 2.447 - (0.09516 * age) + (0.1074 * heightCm) + (0.3362 * weightKg);
+    const vd = tbw / (weightKg * 0.825);
+    const delta = vd * c.individualizedVd.maleCv;
+    return {
+      kind: "individualized",
+      low: vd - delta,
+      high: vd + delta,
+      tbw,
+      caution: tbw < c.individualizedVd.maleTbwCautionLiters,
+      quality: "More individualized",
+      missing: []
+    };
+  }
+
+  if (sex === "female" && heightIn) {
+    const heightCm = heightIn * c.cmPerIn;
+    const tbw = -2.097 + (0.1069 * heightCm) + (0.2466 * weightKg);
+    const vd = tbw / (weightKg * 0.838);
+    const delta = vd * c.individualizedVd.femaleCv;
+    return {
+      kind: "individualized",
+      low: vd - delta,
+      high: vd + delta,
+      tbw,
+      caution: tbw < c.individualizedVd.femaleTbwCautionLiters,
+      quality: "More individualized",
+      missing: []
+    };
+  }
+
+  if (sex === "male" || sex === "female") {
+    const range = c.fixedVd[sex];
+    const missing = [];
+    if (!heightIn) missing.push("height");
+    if (sex === "male" && !age) missing.push("age");
+    return {
+      kind: "fixed",
+      low: range[0],
+      high: range[1],
+      tbw: null,
+      caution: false,
+      quality: "Standard",
+      missing
+    };
+  }
+
+  return {
+    kind: "sexIndependent",
+    low: c.fixedVd.sexIndependent[0],
+    high: c.fixedVd.sexIndependent[1],
+    tbw: null,
+    caution: false,
+    quality: "Broad",
+    missing: ["sex assigned at birth", ...(heightIn ? [] : ["height"]), ...(age ? [] : ["age"])]
+  };
+}
+
+const maximumForm = document.querySelector("#maximum-bac-form");
+const maximumResult = document.querySelector("#maximum-bac-result");
+const maximumRange = document.querySelector("#maximum-bac-range");
+const maximumQuality = document.querySelector("#maximum-quality");
+const maximumWarning = document.querySelector("#maximum-warning");
+const maximumEthanol = document.querySelector("#maximum-ethanol");
+const maximumVd = document.querySelector("#maximum-vd");
+const maximumCalculation = document.querySelector("#maximum-calculation");
+const maximumMethodBadge = document.querySelector("#maximum-method-badge");
+const maximumComparison = document.querySelector("#maximum-comparison");
+const maximumComparisonStatus = document.querySelector("#maximum-comparison-status");
+const maximumComparisonCopy = document.querySelector("#maximum-comparison-copy");
+
+maximumForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const c = BAC_METHODS.constants;
+  const weightLb = Number(document.querySelector("#max-weight").value);
+  const sex = document.querySelector("#max-sex").value;
+  const ageRaw = document.querySelector("#max-age").value;
+  const heightRaw = document.querySelector("#max-height").value;
+  const lastDrinkRaw = document.querySelector("#max-last-drink").value;
+  const observedRaw = document.querySelector("#max-observed-bac").value;
+  const observedSpecimen = document.querySelector("#max-observed-specimen").value;
+  const observedTimeRaw = document.querySelector("#max-observed-time").value;
+  const age = ageRaw ? Number(ageRaw) : null;
+  const heightIn = heightRaw ? Number(heightRaw) : null;
+  const lastDrinkTime = lastDrinkRaw ? new Date(lastDrinkRaw) : null;
+  const observedTime = observedTimeRaw ? new Date(observedTimeRaw) : null;
+  const observedValue = observedRaw ? Number(observedRaw) : null;
+
+  if (!Number.isFinite(weightLb) || weightLb <= 0) return;
+  const weightKg = weightLb * c.kgPerLb;
+
+  let grams = 0;
+  const drinkDescriptions = [];
+
+  [...drinkRows.children].forEach((row, index) => {
+    const name = row.querySelector(".drink-name").value.trim() || ("Beverage " + (index + 1));
+    const volume = Number(row.querySelector(".drink-volume").value);
+    const abv = Number(row.querySelector(".drink-abv").value);
+    const quantity = Number(row.querySelector(".drink-quantity").value);
+
+    if (!Number.isFinite(volume) || !Number.isFinite(abv) || !Number.isFinite(quantity)) return;
+
+    const rowGrams = volume * quantity * c.mlPerOz * (abv / 100) * c.ethanolDensityGPerMl;
+    grams += rowGrams;
+    drinkDescriptions.push(
+      name + ": " + quantity + " × " + volume + " oz at " + abv + "% ABV = " + rowGrams.toFixed(1) + " g ethanol"
+    );
+  });
+
+  maximumResult.hidden = false;
+  maximumWarning.hidden = true;
+  maximumWarning.textContent = "";
+  maximumComparison.hidden = true;
+  maximumComparisonStatus.textContent = "";
+  maximumComparisonCopy.textContent = "";
+
+  if (grams <= 0) {
+    maximumRange.textContent = "Check beverages";
+    maximumQuality.textContent = "Enter at least one valid beverage.";
+    return;
+  }
+
+  const vd = getVdEstimate(sex, weightKg, heightIn, age);
+
+  const bacLow = grams / (vd.high * weightKg * 10);
+  const bacHigh = grams / (vd.low * weightKg * 10);
+
+  maximumRange.textContent = fmt(bacLow) + "–" + fmt(bacHigh) + " g/dL";
+  maximumEthanol.textContent = grams.toFixed(1) + " g";
+  maximumVd.textContent = vd.low.toFixed(3) + "–" + vd.high.toFixed(3) + " L/kg";
+
+  maximumMethodBadge.dataset.methodDefinition = vd.kind;
+  maximumMethodBadge.textContent = BAC_METHODS.definitions[vd.kind].label;
+
+  let qualityText = "Estimate quality: " + vd.quality + ".";
+  if (vd.missing.length) {
+    qualityText += " Missing information: " + [...new Set(vd.missing)].join(", ") + ".";
+  }
+  maximumQuality.textContent = qualityText;
+
+  const warnings = [];
+  if (vd.caution) {
+    warnings.push("The individualized total-body-water estimate is below the ASB caution threshold and should be evaluated carefully.");
+  }
+  if (vd.kind !== "individualized") {
+    warnings.push("A population Vd range was used because the information needed for an individualized calculation was not complete.");
+  }
+  if (warnings.length) {
+    maximumWarning.hidden = false;
+    maximumWarning.textContent = warnings.join(" ");
+  }
+
+  let comparisonSummary = null;
+  let observedLow = null;
+  let observedHigh = null;
+  let observedUnit = observedSpecimen === "breath" ? "g/210 L" : "g/dL";
+
+  if (observedValue !== null && Number.isFinite(observedValue) && observedValue >= 0) {
+    observedLow = observedValue;
+    observedHigh = observedValue;
+
+    if (observedSpecimen === "serum" || observedSpecimen === "plasma") {
+      observedLow = observedValue / c.serumPlasmaRatioMax;
+      observedHigh = observedValue / c.serumPlasmaRatioMin;
+      observedUnit = "g/dL whole-blood equivalent";
+    }
+
+    const exceedsMaximum = observedLow > bacHigh;
+    maximumComparison.hidden = false;
+
+    if (exceedsMaximum) {
+      maximumComparisonStatus.textContent = "Reported drinking history does not account for the observed result under this model.";
+      maximumComparisonCopy.textContent =
+        "Even the low end of the observed-result range (" + fmt(observedLow) + " " + observedUnit +
+        ") exceeds the high end of the theoretical maximum from the reported drinks (" + fmt(bacHigh) +
+        " g/dL). Under the ASB 122 assumptions used here, the reported amount of alcohol is insufficient to account for the observed result. This does not identify why the history differs.";
+      comparisonSummary = "Observed comparison: the observed result exceeds the theoretical maximum from the reported drinking history.";
+    } else {
+      maximumComparisonStatus.textContent = "Observed result is not excluded by the reported drinking history.";
+      maximumComparisonCopy.textContent =
+        "The observed result falls at or below the theoretical maximum range from the reported drinks. This means the reported amount is not ruled out by this calculation; it does not prove the drinking history is accurate.";
+      comparisonSummary = "Observed comparison: the observed result does not exceed the theoretical maximum from the reported drinking history.";
+    }
+
+    if (lastDrinkTime && observedTime && !Number.isNaN(lastDrinkTime.getTime()) && !Number.isNaN(observedTime.getTime())) {
+      const hoursAfterLastDrink = hoursBetween(lastDrinkTime, observedTime);
+      if (hoursAfterLastDrink >= 0) {
+        const timingSentence =
+          " The observed test was " + hoursAfterLastDrink.toFixed(2) + " hours after the reported last drink.";
+        maximumComparisonCopy.textContent += timingSentence;
+
+        if (hoursAfterLastDrink >= 2) {
+          maximumComparisonCopy.textContent +=
+            " Because this is at least 2 hours after reported drinking cessation, ASB 122 considers it reasonable to assume the subject was post-absorptive at the test time, absent contrary case information.";
+        } else {
+          maximumComparisonCopy.textContent +=
+            " Because this is less than 2 hours after reported drinking cessation, incomplete absorption remains possible.";
+        }
+      } else {
+        maximumComparisonCopy.textContent +=
+          " The observed test time is earlier than the reported last-drink time, so the reported timeline should be checked.";
+      }
+    } else if (lastDrinkTime || observedTime) {
+      maximumComparisonCopy.textContent +=
+        " A complete last-drink/test-time pair was not provided, so Reference Desk did not make a timing-based absorption assumption for this comparison.";
+    }
+  }
+
+  const lines = [
+    ...drinkDescriptions,
+    "Total ethanol dose: " + grams.toFixed(1) + " g.",
+    "Body weight: " + weightLb.toFixed(1) + " lb = " + weightKg.toFixed(1) + " kg.",
+    "Distribution method: " + BAC_METHODS.definitions[vd.kind].label + ".",
+    "Vd range used: " + vd.low.toFixed(3) + "–" + vd.high.toFixed(3) + " L/kg."
+  ];
+
+  if (lastDrinkTime && !Number.isNaN(lastDrinkTime.getTime())) {
+    lines.push("Reported last-drink time: " + lastDrinkTime.toLocaleString() + ".");
+  }
+
+  if (observedValue !== null && Number.isFinite(observedValue)) {
+    lines.push(
+      "Observed result entered: " + fmt(observedValue) + " " +
+      (observedSpecimen === "breath" ? "g/210 L" : "g/dL") + " (" + observedSpecimen + ")."
+    );
+    if (observedLow !== observedHigh) {
+      lines.push(
+        "Observed serum/plasma result converted to whole-blood-equivalent range: " +
+        fmt(observedLow) + "–" + fmt(observedHigh) + " g/dL."
+      );
+    }
+    if (observedTime && !Number.isNaN(observedTime.getTime())) {
+      lines.push("Observed test/draw time: " + observedTime.toLocaleString() + ".");
+    }
+    if (comparisonSummary) lines.push(comparisonSummary);
+  }
+
+  if (vd.tbw !== null) {
+    lines.push("Calculated total body water: " + vd.tbw.toFixed(1) + " L.");
+  }
+
+  lines.push(
+    "Equation: BAC = ethanol dose ÷ (Vd × body weight × 10).",
+    "Theoretical maximum BAC: " + fmt(bacLow) + "–" + fmt(bacHigh) + " g/dL.",
+    "Assumptions: complete absorption and no alcohol elimination before the theoretical maximum.",
+    "The observed-result comparison is a consistency screen, not a determination that a person was truthful, deceptive, or impaired."
+  );
+
+  renderParagraphs(maximumCalculation, lines);
+});
+
+setBacMode("retrograde");

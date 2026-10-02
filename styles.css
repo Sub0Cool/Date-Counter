@@ -1277,3 +1277,383 @@ h1 {
     display: none;
   }
 }
+
+
+/* Blood Alcohol Estimator */
+.bac-card {
+  margin-top: 0;
+}
+
+.bac-card h2 {
+  margin: 4px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  font-weight: 500;
+}
+
+.bac-intro {
+  max-width: 760px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.bac-mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.bac-mode-button {
+  padding: 10px 14px;
+  color: var(--green-dark);
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.bac-mode-button.is-active {
+  color: white;
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.bac-mode-panel {
+  margin-top: 22px;
+}
+
+.bac-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.bac-form label,
+.drink-row label {
+  display: block;
+  min-width: 0;
+}
+
+.bac-form label > span,
+.drink-row label > span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.bac-form input,
+.bac-form select,
+.drink-row input {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 10px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+}
+
+.bac-form input:focus,
+.bac-form select:focus,
+.drink-row input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(63, 88, 115, 0.10);
+}
+
+.bac-form small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.bac-submit {
+  margin-top: 18px;
+}
+
+.bac-result {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.bac-result-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.bac-range {
+  display: block;
+  margin-top: 5px;
+  color: var(--green-dark);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 500;
+}
+
+.method-badge {
+  flex: none;
+  padding: 7px 10px;
+  color: var(--green-dark);
+  background: var(--mint);
+  border: 1px solid #d2cbbb;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.method-badge:hover,
+.method-badge:focus-visible {
+  background: #ddd6c8;
+  outline: none;
+}
+
+.estimate-quality {
+  margin: 14px 0 0;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.bac-warning {
+  margin-top: 14px;
+  padding: 12px 14px;
+  color: #6a5226;
+  background: #f5ecd8;
+  border-left: 3px solid #9d7b3c;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.bac-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.bac-stat {
+  padding: 14px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.bac-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bac-stat strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--green-dark);
+}
+
+.calculation-details {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.calculation-details summary {
+  color: var(--green-dark);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.calculation-copy {
+  margin-top: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.calculation-copy p {
+  margin: 7px 0;
+}
+
+.drink-list-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: end;
+  margin-top: 24px;
+}
+
+.drink-list-heading h3 {
+  margin: 3px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.drink-rows {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.drink-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 0.8fr 36px;
+  gap: 10px;
+  align-items: end;
+  padding: 13px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.remove-drink {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.35rem;
+  place-items: center;
+}
+
+.remove-drink:hover {
+  color: var(--error);
+  background: #f4e7e9;
+}
+
+.method-dialog {
+  width: min(560px, calc(100% - 32px));
+  padding: 26px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.method-dialog::backdrop {
+  background: rgba(31, 42, 58, 0.38);
+}
+
+.method-dialog h2 {
+  margin: 4px 34px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 500;
+}
+
+.method-dialog p {
+  line-height: 1.6;
+}
+
+.method-dialog-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.4rem;
+}
+
+.method-dialog-source a {
+  color: var(--green-dark);
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .bac-form-grid,
+  .bac-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bac-result-heading {
+    flex-direction: column;
+  }
+
+  .drink-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .drink-row .remove-drink {
+    grid-column: 2;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 480px) {
+  .drink-row {
+    grid-template-columns: 1fr;
+  }
+
+  .drink-row .remove-drink {
+    grid-column: 1;
+    justify-self: end;
+  }
+}
+
+
+.bac-comparison {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.bac-comparison > strong {
+  display: block;
+  color: var(--green-dark);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.bac-comparison > p:last-child {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+
+.bac-assumption-note {
+  margin-top: 16px;
+  padding: 13px 15px;
+  color: var(--muted);
+  background: var(--mint-light);
+  border-left: 3px solid var(--green);
+  border-radius: 9px;
+}
+
+.bac-assumption-note strong {
+  display: block;
+  color: var(--green-dark);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+.bac-assumption-note p {
+  margin: 5px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
