@@ -1,9 +1,9 @@
-// Central offense data for Expediter Tool Kit.
+// Central offense data for Reference Desk.
 //
-// This file is intentionally small for the first migration. It contains only
-// offenses that were already present in the Toolkit; no new UCC offenses are
-// introduced here. Additional legal attributes can be added to each offense
-// over time without duplicating the same offense across multiple tools.
+// These records were migrated from the existing Maximum Exposure lookup.
+// No new offenses or exposure rules are introduced by this file. Keeping the
+// offense data here gives the Toolkit one central place to add shared legal
+// attributes over time without changing the lookup's current behavior.
 
 window.EXPEDITER_OFFENSE_DATA = [
   {
@@ -148,6 +148,462 @@ window.EXPEDITER_OFFENSE_DATA = [
       law: "HSC",
       source: "11550",
       note: "The misdemeanor maximum is one year; the statute also contains a 90-day minimum subject to statutory exceptions and treatment provisions."
+    }
+  },
+  {
+    code: "PC",
+    section: "69",
+    name: "Resisting or deterring an executive officer",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 69(a)",
+      law: "PEN",
+      source: "69",
+      note: "Misdemeanor alternative is county jail not exceeding one year; the offense may also be punished as a felony."
+    }
+  },
+  {
+    code: "PC",
+    section: "136.1",
+    name: "Dissuading a witness or victim",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 136.1(a)-(b)",
+      law: "PEN",
+      source: "136.1",
+      note: "The misdemeanor forms in subdivisions (a) and (b) carry up to one year. Subdivision (c) circumstances make the offense a felony."
+    }
+  },
+  {
+    code: "PC",
+    section: "148",
+    name: "Resisting, delaying, or obstructing",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "PC § 148",
+      law: "PEN",
+      source: "148",
+      note: "PC § 148(a) carries up to one year. Other subdivisions can be wobblers or felony-only, so use the subdivision for a precise answer."
+    }
+  },
+  {
+    code: "PC",
+    section: "148.9",
+    name: "False identification to a peace officer",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 148.9 & 19",
+      law: "PEN",
+      source: "148.9",
+      note: "Section 148.9 declares the offense a misdemeanor but provides no separate jail maximum; the general misdemeanor maximum in PC § 19 applies."
+    }
+  },
+  {
+    code: "PC",
+    section: "243(b)",
+    name: "Battery on specified protected person",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 243(b)",
+      law: "PEN",
+      source: "243",
+      note: "Applies when the protected-person and knowledge requirements of subdivision (b) are met."
+    }
+  },
+  {
+    code: "PC",
+    section: "243(c)",
+    name: "Battery on specified protected person causing injury",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 243(c)",
+      law: "PEN",
+      source: "243",
+      note: "The misdemeanor alternative is up to one year; qualifying conduct may also be punished as a felony."
+    }
+  },
+  {
+    code: "PC",
+    section: "243(d)",
+    name: "Battery causing serious bodily injury",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 243(d)",
+      law: "PEN",
+      source: "243",
+      note: "The misdemeanor alternative is up to one year; the offense is a wobbler."
+    }
+  },
+  {
+    code: "PC",
+    section: "245(a)(4)",
+    name: "Assault by means likely to produce great bodily injury",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 245(a)(4)",
+      law: "PEN",
+      source: "245",
+      note: "The misdemeanor alternative is county jail not exceeding one year; felony punishment is also authorized."
+    }
+  },
+  {
+    code: "PC",
+    section: "417",
+    name: "Brandishing a weapon",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "PC § 417",
+      law: "PEN",
+      source: "417",
+      note: "Exposure depends on the weapon, location, victim, and subdivision. Misdemeanor maximums within § 417 range up to one year, and mandatory minimum terms can apply."
+    }
+  },
+  {
+    code: "PC",
+    section: "417(a)(2)(A)",
+    name: "Brandishing a concealable firearm in a public place",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 417(a)(2)(A)",
+      law: "PEN",
+      source: "417",
+      note: "County jail is not less than three months and not more than one year."
+    }
+  },
+  {
+    code: "PC",
+    section: "417.4",
+    name: "Brandishing an imitation firearm",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 417.4 & 19",
+      law: "PEN",
+      source: "417.4",
+      note: "Section 417.4 requires at least 30 days; PC § 19 supplies the general six-month misdemeanor ceiling where no different maximum is stated."
+    }
+  },
+  {
+    code: "PC",
+    section: "452(d)",
+    name: "Recklessly causing a fire of property",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 452(d) & 19",
+      law: "PEN",
+      source: "452",
+      note: "Subdivision (d) is a misdemeanor and does not state a separate maximum; PC § 19 supplies the general six-month maximum."
+    }
+  },
+  {
+    code: "PC",
+    section: "459.5",
+    name: "Shoplifting",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 459.5 & 19",
+      law: "PEN",
+      source: "459.5",
+      note: "Ordinary shoplifting is a misdemeanor; specified serious/violent or registrable priors can permit felony punishment."
+    }
+  },
+  {
+    code: "PC",
+    section: "466",
+    name: "Possession of burglary tools",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 466 & 19",
+      law: "PEN",
+      source: "466",
+      note: "Section 466 declares a misdemeanor without a separate jail maximum, so PC § 19 applies."
+    }
+  },
+  {
+    code: "PC",
+    section: "484",
+    name: "Theft",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 484 & 490",
+      law: "PEN",
+      source: "490",
+      note: "This result is for petty theft. Value, property type, and other facts can make the offense grand theft or trigger a different statute."
+    }
+  },
+  {
+    code: "PC",
+    section: "484e",
+    name: "Access-card theft offenses",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "PC §§ 484e, 489 & 490",
+      law: "PEN",
+      source: "484e",
+      note: "Subdivision (c) is petty theft (up to six months). Subdivisions (a), (b), and (d) are grand theft and can carry up to one year as a misdemeanor alternative. Enter the subdivision for precision."
+    }
+  },
+  {
+    code: "PC",
+    section: "487",
+    name: "Grand theft",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 489(c)",
+      law: "PEN",
+      source: "489",
+      note: "Most grand theft has a misdemeanor alternative of up to one year. Theft of a firearm is punished as a felony under PC § 489(a)."
+    }
+  },
+  {
+    code: "PC",
+    section: "496",
+    name: "Receiving stolen property",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 496(a)",
+      law: "PEN",
+      source: "496",
+      note: "When punishable as a misdemeanor, the maximum county-jail term is one year; value and specified priors affect classification."
+    }
+  },
+  {
+    code: "PC",
+    section: "529",
+    name: "False personation",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 529(b)",
+      law: "PEN",
+      source: "529",
+      note: "The statute authorizes either county jail up to one year or felony punishment."
+    }
+  },
+  {
+    code: "PC",
+    section: "530.5(e)",
+    name: "Mail theft",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 530.5(e)",
+      law: "PEN",
+      source: "530.5",
+      note: "Subdivision (e) authorizes county jail not exceeding one year."
+    }
+  },
+  {
+    code: "PC",
+    section: "537(a)(1)",
+    name: "Defrauding an innkeeper — $950 or less",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC § 537(a)(1)",
+      law: "PEN",
+      source: "537",
+      note: "Applies when the value of the food, fuel, services, credit, or accommodations is $950 or less."
+    }
+  },
+  {
+    code: "PC",
+    section: "537(a)(2)",
+    name: "Defrauding an innkeeper — over $950",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 537(a)(2)",
+      law: "PEN",
+      source: "537",
+      note: "The misdemeanor alternative is county jail not more than one year; state-prison punishment is also authorized."
+    }
+  },
+  {
+    code: "PC",
+    section: "594",
+    name: "Vandalism",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 594(b)",
+      law: "PEN",
+      source: "594",
+      note: "The misdemeanor jail maximum is up to one year. Damage amount and prior vandalism convictions affect classification and fines."
+    }
+  },
+  {
+    code: "PC",
+    section: "602",
+    name: "Trespass",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "PC § 602",
+      law: "PEN",
+      source: "602",
+      note: "Section 602 contains many forms of trespass with different consequences. Many misdemeanor forms use the general six-month maximum, while some specified conduct or repeat violations can carry up to one year. Enter the subdivision when known."
+    }
+  },
+  {
+    code: "PC",
+    section: "602.1",
+    name: "Interference with a business or public agency",
+    misdemeanorExposure: {
+      jail: "90 days",
+      basis: "PC § 602.1(a)-(b)",
+      law: "PEN",
+      source: "602.1",
+      note: "The misdemeanor forms in subdivisions (a) and (b) carry up to 90 days."
+    }
+  },
+  {
+    code: "PC",
+    section: "602.5",
+    name: "Unauthorized entry into a dwelling",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "PC § 602.5",
+      law: "PEN",
+      source: "602.5",
+      note: "Subdivision (a) is a misdemeanor subject to the general six-month maximum; aggravated trespass under subdivision (b) carries up to one year."
+    }
+  },
+  {
+    code: "PC",
+    section: "647",
+    name: "Disorderly conduct",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "PC § 647",
+      law: "PEN",
+      source: "647",
+      note: "Exposure depends heavily on the subdivision and facts. Many base misdemeanor forms use the general six-month maximum, while specified repeat, minor-victim, or other circumstances can carry up to one year or felony punishment."
+    }
+  },
+  {
+    code: "PC",
+    section: "21310",
+    name: "Carrying a concealed dirk or dagger",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 21310",
+      law: "PEN",
+      source: "21310",
+      note: "The misdemeanor alternative is county jail not exceeding one year; felony punishment is also authorized."
+    }
+  },
+  {
+    code: "PC",
+    section: "25400",
+    name: "Carrying a concealed firearm",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 25400(c)",
+      law: "PEN",
+      source: "25400",
+      note: "Misdemeanor exposure can reach one year. Some circumstances make the offense a wobbler or felony-only, so the facts and paragraph of subdivision (c) matter."
+    }
+  },
+  {
+    code: "PC",
+    section: "21510(b)",
+    name: "Carrying a switchblade knife",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 21510(b) & 19",
+      law: "PEN",
+      source: "21510",
+      note: "Section 21510 makes the offense a misdemeanor without a separate jail maximum; PC § 19 supplies the general six-month maximum."
+    }
+  },
+  {
+    code: "VC",
+    section: "4462.5",
+    name: "Registration-document offense with intent to evade registration requirements",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "VC §§ 4462.5 & 42002",
+      law: "VEH",
+      source: "4462.5",
+      note: "VC § 4462.5 declares a misdemeanor; VC § 42002 supplies the general six-month misdemeanor maximum where no different penalty is provided."
+    }
+  },
+  {
+    code: "VC",
+    section: "14601s",
+    name: "Driving on a suspended/revoked license — § 14601 series",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "VC §§ 14601 et seq.",
+      law: "VEH",
+      source: "14601",
+      note: "This is treated as a series lookup. Exposure varies by the exact section and prior history. For example, VC § 14601 carries up to six months on a first conviction and up to one year for a qualifying repeat."
+    }
+  },
+  {
+    code: "VC",
+    section: "14601",
+    name: "Driving while privilege suspended or revoked",
+    misdemeanorExposure: {
+      jail: "6 months / 1 year repeat",
+      basis: "VC § 14601(b)",
+      law: "VEH",
+      source: "14601",
+      note: "First conviction: up to six months. A qualifying new offense within five years of a specified prior: up to one year."
+    }
+  },
+  {
+    code: "VC",
+    section: "20001",
+    name: "Hit and run involving injury or death",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "VC § 20001(b)",
+      law: "VEH",
+      source: "20001",
+      note: "The misdemeanor alternative is up to one year. Death or permanent serious injury carries a 90-day minimum if punished in county jail, subject to the statute's interests-of-justice provision."
+    }
+  },
+  {
+    code: "VC",
+    section: "23109",
+    name: "Speed contest / exhibition of speed",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "VC § 23109",
+      law: "VEH",
+      source: "23109",
+      note: "Subdivision and facts matter. A basic first speed contest under subdivision (a) carries up to 90 days; injury, repeat offenses, or serious injury can increase misdemeanor exposure up to six months or one year."
+    }
+  },
+  {
+    code: "HS",
+    section: "11350",
+    name: "Possession of specified controlled substances",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "HSC § 11350(a)",
+      law: "HSC",
+      source: "11350",
+      note: "Ordinary misdemeanor possession carries county jail not more than one year; specified serious/violent or registrable priors can permit felony punishment."
+    }
+  },
+  {
+    code: "HS",
+    section: "11357",
+    name: "Cannabis possession",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "HSC § 11357",
+      law: "HSC",
+      source: "11357",
+      note: "Age, amount, and location control. For an adult possessing more than 28.5 grams of cannabis or more than 8 grams of concentrated cannabis, the misdemeanor maximum is six months; other forms may be infractions or carry lower exposure."
+    }
+  },
+  {
+    code: "HS",
+    section: "11377",
+    name: "Possession of specified controlled substances",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "HSC § 11377(a)",
+      law: "HSC",
+      source: "11377",
+      note: "Ordinary misdemeanor possession carries county jail not more than one year; specified serious/violent or registrable priors can permit felony punishment."
     }
   }
 ];
