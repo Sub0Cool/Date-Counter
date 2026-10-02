@@ -1665,3 +1665,103 @@ h1 {
   font-size: 0.82rem;
   line-height: 1.5;
 }
+
+
+/* Future Date Calculator */
+.future-date-card {
+  max-width: 760px;
+}
+
+.future-date-intro {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.future-date-today {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  margin-top: 22px;
+  padding: 14px 16px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.future-date-today span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.future-date-today strong {
+  color: var(--green-dark);
+  text-align: right;
+}
+
+.future-date-form {
+  margin-top: 20px;
+}
+
+.future-date-form > label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.future-date-help {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.future-date-result {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--mint-light);
+  border-left: 4px solid var(--green);
+  border-radius: 12px;
+}
+
+.future-date-result .eyebrow {
+  margin-bottom: 7px;
+}
+
+.future-date-result strong {
+  display: block;
+  color: var(--green-dark);
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+.future-date-result p:last-child {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.future-date-error {
+  margin: 14px 0 0;
+  padding: 11px 13px;
+  color: var(--error);
+  background: #f8edef;
+  border: 1px solid #ead0d5;
+  border-radius: 9px;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .future-date-today {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .future-date-today strong {
+    text-align: left;
+  }
+}
