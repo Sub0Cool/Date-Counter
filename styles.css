@@ -66,29 +66,26 @@ button {
   margin-bottom: 42px;
 }
 
-.calendar-mark {
+.reference-mark {
   display: grid;
   width: 68px;
   height: 68px;
-  overflow: hidden;
   color: var(--green-dark);
   background: var(--mint);
   border-radius: 18px;
   place-items: center;
 }
 
-.calendar-mark span {
-  width: 100%;
-  height: 15px;
-  background: var(--green);
+.reference-mark svg {
+  width: 42px;
+  height: 42px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.calendar-mark strong {
-  display: grid;
-  height: 53px;
-  font-size: 1.35rem;
-  place-items: center;
-}
 
 .eyebrow {
   margin: 0 0 8px;
@@ -363,19 +360,17 @@ h1 {
     margin-bottom: 32px;
   }
 
-  .calendar-mark {
+  .reference-mark {
     width: 56px;
     height: 56px;
     border-radius: 15px;
   }
 
-  .calendar-mark span {
-    height: 12px;
+  .reference-mark svg {
+    width: 36px;
+    height: 36px;
   }
 
-  .calendar-mark strong {
-    height: 44px;
-  }
 
   .range-heading {
     display: none;
