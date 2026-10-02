@@ -448,6 +448,8 @@ const COMMON_OFFENSE_ALIASES = [
   { terms:["concealed firearm","carrying concealed firearm","carrying a concealed firearm"], code:"PC", section:"25400" },
   { terms:["switchblade","switchblade knife"], code:"PC", section:"21510", subdivisions:["b"], exposureSection:"21510(b)" },
   { terms:["child endangerment"], code:"PC", section:"273a" },
+  { terms:["child endangerment likely gbi","child endangerment likely great bodily harm","felony child endangerment"], code:"PC", section:"273a", subdivisions:["a"], exposureSection:"273a(a)" },
+  { terms:["child endangerment not likely gbi","child endangerment misdemeanor","misdemeanor child endangerment"], code:"PC", section:"273a", subdivisions:["b"], exposureSection:"273a(b)" },
   { terms:["elder abuse"], code:"PC", section:"368" },
   { terms:["animal cruelty"], code:"PC", section:"597", subdivisions:["a"] },
   { terms:["evading","evading a peace officer","misdemeanor evading"], code:"VC", section:"2800.1" },
