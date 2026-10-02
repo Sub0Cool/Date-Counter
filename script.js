@@ -1072,6 +1072,9 @@ const maximumEthanol = document.querySelector("#maximum-ethanol");
 const maximumVd = document.querySelector("#maximum-vd");
 const maximumCalculation = document.querySelector("#maximum-calculation");
 const maximumMethodBadge = document.querySelector("#maximum-method-badge");
+const maximumComparison = document.querySelector("#maximum-comparison");
+const maximumComparisonStatus = document.querySelector("#maximum-comparison-status");
+const maximumComparisonCopy = document.querySelector("#maximum-comparison-copy");
 
 maximumForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1081,8 +1084,15 @@ maximumForm.addEventListener("submit", (event) => {
   const sex = document.querySelector("#max-sex").value;
   const ageRaw = document.querySelector("#max-age").value;
   const heightRaw = document.querySelector("#max-height").value;
+  const lastDrinkRaw = document.querySelector("#max-last-drink").value;
+  const observedRaw = document.querySelector("#max-observed-bac").value;
+  const observedSpecimen = document.querySelector("#max-observed-specimen").value;
+  const observedTimeRaw = document.querySelector("#max-observed-time").value;
   const age = ageRaw ? Number(ageRaw) : null;
   const heightIn = heightRaw ? Number(heightRaw) : null;
+  const lastDrinkTime = lastDrinkRaw ? new Date(lastDrinkRaw) : null;
+  const observedTime = observedTimeRaw ? new Date(observedTimeRaw) : null;
+  const observedValue = observedRaw ? Number(observedRaw) : null;
 
   if (!Number.isFinite(weightLb) || weightLb <= 0) return;
   const weightKg = weightLb * c.kgPerLb;
@@ -1108,6 +1118,9 @@ maximumForm.addEventListener("submit", (event) => {
   maximumResult.hidden = false;
   maximumWarning.hidden = true;
   maximumWarning.textContent = "";
+  maximumComparison.hidden = true;
+  maximumComparisonStatus.textContent = "";
+  maximumComparisonCopy.textContent = "";
 
   if (grams <= 0) {
     maximumRange.textContent = "Check beverages";
@@ -1145,6 +1158,62 @@ maximumForm.addEventListener("submit", (event) => {
     maximumWarning.textContent = warnings.join(" ");
   }
 
+  let comparisonSummary = null;
+  let observedLow = null;
+  let observedHigh = null;
+  let observedUnit = observedSpecimen === "breath" ? "g/210 L" : "g/dL";
+
+  if (observedValue !== null && Number.isFinite(observedValue) && observedValue >= 0) {
+    observedLow = observedValue;
+    observedHigh = observedValue;
+
+    if (observedSpecimen === "serum" || observedSpecimen === "plasma") {
+      observedLow = observedValue / c.serumPlasmaRatioMax;
+      observedHigh = observedValue / c.serumPlasmaRatioMin;
+      observedUnit = "g/dL whole-blood equivalent";
+    }
+
+    const exceedsMaximum = observedLow > bacHigh;
+    maximumComparison.hidden = false;
+
+    if (exceedsMaximum) {
+      maximumComparisonStatus.textContent = "Reported drinking history does not account for the observed result under this model.";
+      maximumComparisonCopy.textContent =
+        "Even the low end of the observed-result range (" + fmt(observedLow) + " " + observedUnit +
+        ") exceeds the high end of the theoretical maximum from the reported drinks (" + fmt(bacHigh) +
+        " g/dL). Under the ASB 122 assumptions used here, the reported amount of alcohol is insufficient to account for the observed result. This does not identify why the history differs.";
+      comparisonSummary = "Observed comparison: the observed result exceeds the theoretical maximum from the reported drinking history.";
+    } else {
+      maximumComparisonStatus.textContent = "Observed result is not excluded by the reported drinking history.";
+      maximumComparisonCopy.textContent =
+        "The observed result falls at or below the theoretical maximum range from the reported drinks. This means the reported amount is not ruled out by this calculation; it does not prove the drinking history is accurate.";
+      comparisonSummary = "Observed comparison: the observed result does not exceed the theoretical maximum from the reported drinking history.";
+    }
+
+    if (lastDrinkTime && observedTime && !Number.isNaN(lastDrinkTime.getTime()) && !Number.isNaN(observedTime.getTime())) {
+      const hoursAfterLastDrink = hoursBetween(lastDrinkTime, observedTime);
+      if (hoursAfterLastDrink >= 0) {
+        const timingSentence =
+          " The observed test was " + hoursAfterLastDrink.toFixed(2) + " hours after the reported last drink.";
+        maximumComparisonCopy.textContent += timingSentence;
+
+        if (hoursAfterLastDrink >= 2) {
+          maximumComparisonCopy.textContent +=
+            " Because this is at least 2 hours after reported drinking cessation, ASB 122 considers it reasonable to assume the subject was post-absorptive at the test time, absent contrary case information.";
+        } else {
+          maximumComparisonCopy.textContent +=
+            " Because this is less than 2 hours after reported drinking cessation, incomplete absorption remains possible.";
+        }
+      } else {
+        maximumComparisonCopy.textContent +=
+          " The observed test time is earlier than the reported last-drink time, so the reported timeline should be checked.";
+      }
+    } else if (lastDrinkTime || observedTime) {
+      maximumComparisonCopy.textContent +=
+        " A complete last-drink/test-time pair was not provided, so Reference Desk did not make a timing-based absorption assumption for this comparison.";
+    }
+  }
+
   const lines = [
     ...drinkDescriptions,
     "Total ethanol dose: " + grams.toFixed(1) + " g.",
@@ -1153,6 +1222,27 @@ maximumForm.addEventListener("submit", (event) => {
     "Vd range used: " + vd.low.toFixed(3) + "–" + vd.high.toFixed(3) + " L/kg."
   ];
 
+  if (lastDrinkTime && !Number.isNaN(lastDrinkTime.getTime())) {
+    lines.push("Reported last-drink time: " + lastDrinkTime.toLocaleString() + ".");
+  }
+
+  if (observedValue !== null && Number.isFinite(observedValue)) {
+    lines.push(
+      "Observed result entered: " + fmt(observedValue) + " " +
+      (observedSpecimen === "breath" ? "g/210 L" : "g/dL") + " (" + observedSpecimen + ")."
+    );
+    if (observedLow !== observedHigh) {
+      lines.push(
+        "Observed serum/plasma result converted to whole-blood-equivalent range: " +
+        fmt(observedLow) + "–" + fmt(observedHigh) + " g/dL."
+      );
+    }
+    if (observedTime && !Number.isNaN(observedTime.getTime())) {
+      lines.push("Observed test/draw time: " + observedTime.toLocaleString() + ".");
+    }
+    if (comparisonSummary) lines.push(comparisonSummary);
+  }
+
   if (vd.tbw !== null) {
     lines.push("Calculated total body water: " + vd.tbw.toFixed(1) + " L.");
   }
@@ -1160,7 +1250,8 @@ maximumForm.addEventListener("submit", (event) => {
   lines.push(
     "Equation: BAC = ethanol dose ÷ (Vd × body weight × 10).",
     "Theoretical maximum BAC: " + fmt(bacLow) + "–" + fmt(bacHigh) + " g/dL.",
-    "Assumptions: complete absorption and no alcohol elimination before the theoretical maximum."
+    "Assumptions: complete absorption and no alcohol elimination before the theoretical maximum.",
+    "The observed-result comparison is a consistency screen, not a determination that a person was truthful, deceptive, or impaired."
   );
 
   renderParagraphs(maximumCalculation, lines);
