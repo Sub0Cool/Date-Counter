@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Count unique inclusive calendar days and estimate California Penal Code section 4019 custody credits."
+      content="California criminal-law quick-reference tools for custody credits, misdemeanor exposure, probation, and Penal Code section 29805."
     />
     <title>Reference Desk</title>
     <link rel="stylesheet" href="styles.css" />
@@ -31,15 +31,63 @@
           </div>
         </header>
 
-        <details class="tool-panel" open>
-          <summary class="tool-summary">
-            <div>
-              <p class="eyebrow">Custody calculator</p>
-              <h2>Dates & Penal Code § 4019 Credits</h2>
-              <p>Count unique custody days and calculate standard § 4019 conduct credits.</p>
-            </div>
-            <span class="tool-chevron" aria-hidden="true">⌄</span>
-          </summary>
+
+        <nav class="tool-dashboard" aria-label="Reference Desk tools">
+          <button class="tool-tile is-active" type="button" data-tool-target="dates" aria-pressed="true">
+            <span class="tool-tile-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32"><rect x="5" y="7" width="22" height="20" rx="3"></rect><path d="M10 4v6M22 4v6M5 13h22M10 18h4M18 18h4M10 23h4"></path></svg>
+            </span>
+            <span class="tool-tile-copy">
+              <span class="tool-tile-kicker">Custody</span>
+              <strong>Dates & § 4019 Credits</strong>
+              <small>Count unique custody days and calculate standard conduct credits.</small>
+            </span>
+            <span class="tool-tile-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="tool-tile" type="button" data-tool-target="exposure" aria-pressed="false">
+            <span class="tool-tile-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32"><path d="M16 5v22M9 9h14M8 9l-4 8h8L8 9ZM24 9l-4 8h8l-4-8ZM11 27h10"></path></svg>
+            </span>
+            <span class="tool-tile-copy">
+              <span class="tool-tile-kicker">Sentencing</span>
+              <strong>Maximum Exposure</strong>
+              <small>Look up misdemeanor jail exposure and governing authority.</small>
+            </span>
+            <span class="tool-tile-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="tool-tile" type="button" data-tool-target="probation" aria-pressed="false">
+            <span class="tool-tile-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32"><rect x="7" y="5" width="18" height="23" rx="3"></rect><path d="M12 5.5h8M11 13l2 2 4-5M11 21l2 2 4-5M19 13h3M19 21h3"></path></svg>
+            </span>
+            <span class="tool-tile-copy">
+              <span class="tool-tile-kicker">Probation</span>
+              <strong>Eligibility & Terms</strong>
+              <small>Review general eligibility and offense-specific mandatory terms.</small>
+            </span>
+            <span class="tool-tile-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="tool-tile" type="button" data-tool-target="firearms" aria-pressed="false">
+            <span class="tool-tile-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32"><path d="M16 4l10 4v7c0 6-4 10-10 13C10 25 6 21 6 15V8l10-4Z"></path><path d="M12 16l3 3 6-7"></path></svg>
+            </span>
+            <span class="tool-tile-copy">
+              <span class="tool-tile-kicker">Firearms</span>
+              <strong>Penal Code § 29805</strong>
+              <small>Check whether an offense appears in the current § 29805 list.</small>
+            </span>
+            <span class="tool-tile-arrow" aria-hidden="true">→</span>
+          </button>
+        </nav>
+
+        <div class="active-tool-heading" aria-live="polite">
+          <p class="eyebrow">Open tool</p>
+          <h2 id="active-tool-title">Dates & Penal Code § 4019 Credits</h2>
+        </div>
+
+        <section class="tool-panel tool-view" id="tool-dates" data-tool-view="dates">
           <div class="tool-panel-body">
             <div class="range-heading" aria-hidden="true">
               <span>Date ranges</span>
@@ -120,17 +168,9 @@
             </section>
 
           </div>
-        </details>
+        </section>
 
-        <details class="tool-panel">
-          <summary class="tool-summary">
-            <div>
-              <p class="eyebrow">Firearm prohibition lookup</p>
-              <h2>Penal Code § 29805 Check</h2>
-              <p>Search by code section or common offense name.</p>
-            </div>
-            <span class="tool-chevron" aria-hidden="true">⌄</span>
-          </summary>
+        <section class="tool-panel tool-view" id="tool-firearms" data-tool-view="firearms" hidden>
           <div class="tool-panel-body">
             <section class="lookup-card" aria-labelledby="lookup-title">
           <p class="eyebrow">California firearm prohibition lookup</p>
@@ -183,17 +223,9 @@
           </p>
             </section>
           </div>
-        </details>
+        </section>
 
-        <details class="tool-panel">
-          <summary class="tool-summary">
-            <div>
-              <p class="eyebrow">Misdemeanor quick reference</p>
-              <h2>Maximum Exposure Lookup</h2>
-              <p>Search common misdemeanor charges by section or offense name.</p>
-            </div>
-            <span class="tool-chevron" aria-hidden="true">⌄</span>
-          </summary>
+        <section class="tool-panel tool-view" id="tool-exposure" data-tool-view="exposure" hidden>
           <div class="tool-panel-body">
             <section class="exposure-card" aria-labelledby="exposure-title">
           <p class="eyebrow">California misdemeanor sentencing</p>
@@ -252,17 +284,9 @@
           </aside>
             </section>
           </div>
-        </details>
+        </section>
 
-        <details class="tool-panel">
-          <summary class="tool-summary">
-            <div>
-              <p class="eyebrow">Sentencing quick reference</p>
-              <h2>Probation Eligibility & Mandatory Terms</h2>
-              <p>Check whether probation is generally available and flag mandatory offense-specific conditions.</p>
-            </div>
-            <span class="tool-chevron" aria-hidden="true">⌄</span>
-          </summary>
+        <section class="tool-panel tool-view" id="tool-probation" data-tool-view="probation" hidden>
           <div class="tool-panel-body">
             <section class="probation-card" aria-labelledby="probation-title">
               <p class="eyebrow">California misdemeanor probation</p>
@@ -323,7 +347,7 @@
               </aside>
             </section>
           </div>
-        </details>
+        </section>
       </section>
     </main>
 
