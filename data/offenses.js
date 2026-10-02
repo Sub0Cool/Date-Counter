@@ -1699,7 +1699,7 @@ window.EXPEDITER_OFFENSE_DATA = [
         }
       ],
       "verification": {
-        "status": "verified against current California statutory text",
+        "status": "cross-checked against current 2026 statutory publication; official California Legislative Information section page was not retrievable in this session",
         "checkedThrough": "2026-10-02"
       }
     }
