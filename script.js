@@ -483,26 +483,32 @@ function legiUrl(lawCode, section) {
   return LEGI_BASE + "?lawCode=" + encodeURIComponent(lawCode) + "&sectionNum=" + encodeURIComponent(section + ".");
 }
 
+const CENTRAL_MISDEMEANOR_EXPOSURE = (window.EXPEDITER_OFFENSE_DATA || [])
+  .filter((offense) => offense.misdemeanorExposure)
+  .map((offense) => ({
+    code: offense.code,
+    section: offense.section,
+    name: offense.name,
+    jail: offense.misdemeanorExposure.jail,
+    basis: offense.misdemeanorExposure.basis,
+    law: offense.misdemeanorExposure.law,
+    source: offense.misdemeanorExposure.source,
+    note: offense.misdemeanorExposure.note,
+  }));
+
 const MISDEMEANOR_EXPOSURE = [
+  ...CENTRAL_MISDEMEANOR_EXPOSURE,
   { code:"PC", section:"69", name:"Resisting or deterring an executive officer", jail:"1 year", basis:"PC § 69(a)", law:"PEN", source:"69", note:"Misdemeanor alternative is county jail not exceeding one year; the offense may also be punished as a felony." },
   { code:"PC", section:"136.1", name:"Dissuading a witness or victim", jail:"1 year", basis:"PC § 136.1(a)-(b)", law:"PEN", source:"136.1", note:"The misdemeanor forms in subdivisions (a) and (b) carry up to one year. Subdivision (c) circumstances make the offense a felony." },
   { code:"PC", section:"148", name:"Resisting, delaying, or obstructing", jail:"Varies", basis:"PC § 148", law:"PEN", source:"148", note:"PC § 148(a) carries up to one year. Other subdivisions can be wobblers or felony-only, so use the subdivision for a precise answer." },
   { code:"PC", section:"148.9", name:"False identification to a peace officer", jail:"6 months", basis:"PC §§ 148.9 & 19", law:"PEN", source:"148.9", note:"Section 148.9 declares the offense a misdemeanor but provides no separate jail maximum; the general misdemeanor maximum in PC § 19 applies." },
-  { code:"PC", section:"240", name:"Assault", jail:"6 months", basis:"PC § 241(a)", law:"PEN", source:"241", note:"PC § 240 defines assault; punishment for ordinary assault is supplied by PC § 241(a)." },
-  { code:"PC", section:"242", name:"Battery", jail:"6 months", basis:"PC § 243(a)", law:"PEN", source:"243", note:"PC § 242 defines battery; punishment for ordinary battery is supplied by PC § 243(a)." },
   { code:"PC", section:"243(b)", name:"Battery on specified protected person", jail:"1 year", basis:"PC § 243(b)", law:"PEN", source:"243", note:"Applies when the protected-person and knowledge requirements of subdivision (b) are met." },
   { code:"PC", section:"243(c)", name:"Battery on specified protected person causing injury", jail:"1 year", basis:"PC § 243(c)", law:"PEN", source:"243", note:"The misdemeanor alternative is up to one year; qualifying conduct may also be punished as a felony." },
   { code:"PC", section:"243(d)", name:"Battery causing serious bodily injury", jail:"1 year", basis:"PC § 243(d)", law:"PEN", source:"243", note:"The misdemeanor alternative is up to one year; the offense is a wobbler." },
-  { code:"PC", section:"243(e)(1)", name:"Domestic battery", jail:"1 year", basis:"PC § 243(e)(1)", law:"PEN", source:"243", note:"Battery against a spouse, cohabitant, co-parent, former spouse, fiancé(e), or current/former dating partner is punishable by up to one year in county jail. A qualifying prior can trigger a 48-hour minimum if probation is granted, absent good cause." },
-  { code:"PC", section:"273.5", name:"Corporal injury to spouse or cohabitant", jail:"1 year", basis:"PC § 273.5(a)", law:"PEN", source:"273.5", note:"The misdemeanor alternative is county jail not exceeding one year; felony punishment is also authorized. Qualifying recent priors can affect felony terms and probation conditions." },
-  { code:"PC", section:"273.6", name:"Violation of protective order", jail:"1 year", basis:"PC § 273.6(a)", law:"PEN", source:"273.6", note:"A knowing and intentional violation is punishable by up to one year in county jail. Injury and qualifying repeat violations can trigger mandatory minimum custody and/or felony exposure." },
-  { code:"PC", section:"166(c)(1)", name:"Violation of specified protective or stay-away order", jail:"1 year", basis:"PC § 166(c)(1)", law:"PEN", source:"166", note:"A willful and knowing violation of the specified protective or stay-away orders is punishable by up to one year in county jail. Physical injury triggers at least 48 hours of jail under subdivision (c)(2)." },
-  { code:"PC", section:"245(a)(1)", name:"Assault with a deadly weapon other than a firearm", jail:"1 year", basis:"PC § 245(a)(1)", law:"PEN", source:"245", note:"The misdemeanor alternative is county jail not exceeding one year; felony punishment is also authorized." },
   { code:"PC", section:"245(a)(4)", name:"Assault by means likely to produce great bodily injury", jail:"1 year", basis:"PC § 245(a)(4)", law:"PEN", source:"245", note:"The misdemeanor alternative is county jail not exceeding one year; felony punishment is also authorized." },
   { code:"PC", section:"417", name:"Brandishing a weapon", jail:"Varies", basis:"PC § 417", law:"PEN", source:"417", note:"Exposure depends on the weapon, location, victim, and subdivision. Misdemeanor maximums within § 417 range up to one year, and mandatory minimum terms can apply." },
   { code:"PC", section:"417(a)(2)(A)", name:"Brandishing a concealable firearm in a public place", jail:"1 year", basis:"PC § 417(a)(2)(A)", law:"PEN", source:"417", note:"County jail is not less than three months and not more than one year." },
   { code:"PC", section:"417.4", name:"Brandishing an imitation firearm", jail:"6 months", basis:"PC §§ 417.4 & 19", law:"PEN", source:"417.4", note:"Section 417.4 requires at least 30 days; PC § 19 supplies the general six-month misdemeanor ceiling where no different maximum is stated." },
-  { code:"PC", section:"422", name:"Criminal threats", jail:"1 year", basis:"PC § 422(a)", law:"PEN", source:"422", note:"The misdemeanor alternative is county jail not exceeding one year; felony punishment is also authorized." },
   { code:"PC", section:"452(d)", name:"Recklessly causing a fire of property", jail:"6 months", basis:"PC §§ 452(d) & 19", law:"PEN", source:"452", note:"Subdivision (d) is a misdemeanor and does not state a separate maximum; PC § 19 supplies the general six-month maximum." },
   { code:"PC", section:"459.5", name:"Shoplifting", jail:"6 months", basis:"PC §§ 459.5 & 19", law:"PEN", source:"459.5", note:"Ordinary shoplifting is a misdemeanor; specified serious/violent or registrable priors can permit felony punishment." },
   { code:"PC", section:"466", name:"Possession of burglary tools", jail:"6 months", basis:"PC §§ 466 & 19", law:"PEN", source:"466", note:"Section 466 declares a misdemeanor without a separate jail maximum, so PC § 19 applies." },
@@ -524,17 +530,13 @@ const MISDEMEANOR_EXPOSURE = [
   { code:"PC", section:"21510(b)", name:"Carrying a switchblade knife", jail:"6 months", basis:"PC §§ 21510(b) & 19", law:"PEN", source:"21510", note:"Section 21510 makes the offense a misdemeanor without a separate jail maximum; PC § 19 supplies the general six-month maximum." },
 
   { code:"VC", section:"4462.5", name:"Registration-document offense with intent to evade registration requirements", jail:"6 months", basis:"VC §§ 4462.5 & 42002", law:"VEH", source:"4462.5", note:"VC § 4462.5 declares a misdemeanor; VC § 42002 supplies the general six-month misdemeanor maximum where no different penalty is provided." },
-  { code:"VC", section:"2800.1", name:"Misdemeanor evading a peace officer", jail:"1 year", basis:"VC § 2800.1", law:"VEH", source:"2800.1", note:"The statute expressly provides county jail for not more than one year." },
   { code:"VC", section:"14601s", name:"Driving on a suspended/revoked license — § 14601 series", jail:"Varies", basis:"VC §§ 14601 et seq.", law:"VEH", source:"14601", note:"This is treated as a series lookup. Exposure varies by the exact section and prior history. For example, VC § 14601 carries up to six months on a first conviction and up to one year for a qualifying repeat." },
   { code:"VC", section:"14601", name:"Driving while privilege suspended or revoked", jail:"6 months / 1 year repeat", basis:"VC § 14601(b)", law:"VEH", source:"14601", note:"First conviction: up to six months. A qualifying new offense within five years of a specified prior: up to one year." },
   { code:"VC", section:"20001", name:"Hit and run involving injury or death", jail:"1 year", basis:"VC § 20001(b)", law:"VEH", source:"20001", note:"The misdemeanor alternative is up to one year. Death or permanent serious injury carries a 90-day minimum if punished in county jail, subject to the statute's interests-of-justice provision." },
-  { code:"VC", section:"20002", name:"Hit and run — property damage", jail:"6 months", basis:"VC § 20002(c)", law:"VEH", source:"20002", note:"The statute expressly provides county jail not exceeding six months." },
   { code:"VC", section:"23109", name:"Speed contest / exhibition of speed", jail:"Varies", basis:"VC § 23109", law:"VEH", source:"23109", note:"Subdivision and facts matter. A basic first speed contest under subdivision (a) carries up to 90 days; injury, repeat offenses, or serious injury can increase misdemeanor exposure up to six months or one year." },
 
   { code:"HS", section:"11350", name:"Possession of specified controlled substances", jail:"1 year", basis:"HSC § 11350(a)", law:"HSC", source:"11350", note:"Ordinary misdemeanor possession carries county jail not more than one year; specified serious/violent or registrable priors can permit felony punishment." },
   { code:"HS", section:"11357", name:"Cannabis possession", jail:"Varies", basis:"HSC § 11357", law:"HSC", source:"11357", note:"Age, amount, and location control. For an adult possessing more than 28.5 grams of cannabis or more than 8 grams of concentrated cannabis, the misdemeanor maximum is six months; other forms may be infractions or carry lower exposure." },
-  { code:"HS", section:"11364", name:"Possession of drug paraphernalia", jail:"180 days", basis:"HSC §§ 11364 & 11374", law:"HSC", source:"11364", note:"HSC § 11374 supplies the default penalty for violations in the division when no different penalty is provided: 15 to 180 days, plus the statutory fine range." },
-  { code:"HS", section:"11550", name:"Under the influence of a controlled substance", jail:"1 year", basis:"HSC § 11550(a)", law:"HSC", source:"11550", note:"The misdemeanor maximum is one year; the statute also contains a 90-day minimum subject to statutory exceptions and treatment provisions." },
   { code:"HS", section:"11377", name:"Possession of specified controlled substances", jail:"1 year", basis:"HSC § 11377(a)", law:"HSC", source:"11377", note:"Ordinary misdemeanor possession carries county jail not more than one year; specified serious/violent or registrable priors can permit felony punishment." },
 ];
 
