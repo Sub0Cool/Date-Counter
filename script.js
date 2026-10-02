@@ -183,120 +183,35 @@ const lookupSummary = document.querySelector("#lookup-summary");
 const showWhereButton = document.querySelector("#show-where");
 const lookupDetails = document.querySelector("#lookup-details");
 
-const SECTION_29805_RULES = [
-  {
-    code: "PC",
-    sections: ["71","76","136.1","136.5","140","171b","171d","186.28","240","241","242","243","243.4","244.5","245","245.5","246.3","247","273.6","417","417.6","422","422.6","626.9","646.9","830.95","17500","17510","25300","25800","30315","32625","27510"],
-    subdivision: null,
-    citation: "PC § 29805(a)(1)",
-    effect: "10-year prohibition following the misdemeanor conviction.",
-  },
-  {
-    code: "PC", sections: ["273.5"], subdivision: null,
-    citation: "PC § 29805(a)(1)",
-    effect: "10-year prohibition following the misdemeanor conviction.",
-  },
-  {
-    code: "PC", sections: ["273.5"], subdivision: null,
-    citation: "PC § 29805(b)",
-    effect: "For misdemeanor convictions on or after January 1, 2019, § 29805(b) imposes a prohibition without the 10-year limitation stated in subdivision (a)(1).",
-  },
-  {
-    code: "PC", sections: ["148"], subdivision: ["d"],
-    citation: "PC § 29805(a)(1)",
-    effect: "Only subdivision (d) is listed.",
-  },
-  {
-    code: "PC", sections: ["148.5"], subdivision: ["f"],
-    citation: "PC § 29805(a)(1)",
-    effect: "Only subdivision (f) is listed.",
-  },
-  {
-    code: "PC", sections: ["171c"], subdivision: ["a","1"],
-    citation: "PC § 29805(a)(1)",
-    effect: "Paragraph (1) of subdivision (a) is listed.",
-  },
-  {
-    code: "PC", sections: ["26100"], subdivisionAny: [["b"],["d"]],
-    citation: "PC § 29805(a)(1)",
-    effect: "Subdivisions (b) and (d) are listed.",
-  },
-  {
-    code: "PC", sections: ["487"], subdivision: null, conditional: true,
-    citation: "PC § 29805(a)(1)",
-    effect: "Listed only when the property taken was a firearm.",
-  },
-  {
-    code: "PC", sections: ["27590"], subdivision: ["c"],
-    citation: "PC § 29805(a)(1)",
-    effect: "The conduct punished in subdivision (c) is listed.",
-  },
-  {
-    code: "WIC", sections: ["8100","8101","8103"], subdivision: null,
-    citation: "PC § 29805(a)(1)",
-    effect: "These Welfare and Institutions Code sections are expressly listed.",
-  },
-  {
-    code: "WIC", sections: ["871.5","1001.5"], subdivision: null, conditional: true,
-    citation: "PC § 29805(a)(1)",
-    effect: "Applies to firearm-related offenses pursuant to these Welfare and Institutions Code sections.",
-  },
-  {
-    code: "PC", sections: ["25100","25135","25200"], subdivision: null,
-    citation: "PC § 29805(c)",
-    effect: "Applies to misdemeanor convictions on or after January 1, 2020; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["273a"], subdivision: null,
-    citation: "PC § 29805(d)",
-    effect: "Applies to misdemeanor convictions on or after January 1, 2023; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["368"], subdivisionAny: [["b"],["c"]],
-    citation: "PC § 29805(d)",
-    effect: "Only subdivisions (b) and (c), for misdemeanor convictions on or after January 1, 2023; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["29180"], subdivisionAny: [["e"],["f"]],
-    citation: "PC § 29805(d)",
-    effect: "Only subdivisions (e) and (f), for misdemeanor convictions on or after January 1, 2023; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["29805"], subdivision: null,
-    citation: "PC § 29805(e)",
-    effect: "A misdemeanor conviction of § 29805 on or after January 1, 2024 triggers a 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["25400"], subdivisionAny: [["c","5"],["c","6"],["c","7"]],
-    citation: "PC § 29805(f)",
-    effect: "Paragraphs (5), (6), and (7) of subdivision (c), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["25850"], subdivisionAny: [["c","5"],["c","6"],["c","7"]],
-    citation: "PC § 29805(f)",
-    effect: "Paragraphs (5), (6), and (7) of subdivision (c), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["26350"], subdivision: ["a"],
-    citation: "PC § 29805(f)",
-    effect: "Subdivision (a), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["26400"], subdivision: ["a"],
-    citation: "PC § 29805(f)",
-    effect: "Subdivision (a), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["597"], subdivision: ["a"],
-    citation: "PC § 29805(g)",
-    effect: "Subdivision (a), for misdemeanor convictions on or after January 1, 2025; 10-year prohibition.",
-  },
-  {
-    code: "PC", sections: ["24610","27530","29185","29186","30605","30610","32900","33215","33600"], subdivision: null,
-    citation: "PC § 29805(h)",
-    effect: "Applies to misdemeanor convictions on or after January 1, 2026; 10-year prohibition.",
-  },
+const SECTION_29805_EFFECTS = [
+  "10-year prohibition following the misdemeanor conviction.",
+  "10-year prohibition following the misdemeanor conviction.",
+  "For misdemeanor convictions on or after January 1, 2019, § 29805(b) imposes a prohibition without the 10-year limitation stated in subdivision (a)(1).",
+  "Only subdivision (d) is listed.",
+  "Only subdivision (f) is listed.",
+  "Paragraph (1) of subdivision (a) is listed.",
+  "Subdivisions (b) and (d) are listed.",
+  "Listed only when the property taken was a firearm.",
+  "The conduct punished in subdivision (c) is listed.",
+  "These Welfare and Institutions Code sections are expressly listed.",
+  "Applies to firearm-related offenses pursuant to these Welfare and Institutions Code sections.",
+  "Applies to misdemeanor convictions on or after January 1, 2020; 10-year prohibition.",
+  "Applies to misdemeanor convictions on or after January 1, 2023; 10-year prohibition.",
+  "Only subdivisions (b) and (c), for misdemeanor convictions on or after January 1, 2023; 10-year prohibition.",
+  "Only subdivisions (e) and (f), for misdemeanor convictions on or after January 1, 2023; 10-year prohibition.",
+  "A misdemeanor conviction of § 29805 on or after January 1, 2024 triggers a 10-year prohibition.",
+  "Paragraphs (5), (6), and (7) of subdivision (c), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
+  "Paragraphs (5), (6), and (7) of subdivision (c), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
+  "Subdivision (a), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
+  "Subdivision (a), for misdemeanor convictions on or after January 1, 2024; 10-year prohibition.",
+  "Subdivision (a), for misdemeanor convictions on or after January 1, 2025; 10-year prohibition.",
+  "Applies to misdemeanor convictions on or after January 1, 2026; 10-year prohibition."
 ];
+
+const SECTION_29805_RULES = (window.REFERENCE_DESK_29805_RULES || []).map((rule) => ({
+  ...rule,
+  effect: SECTION_29805_EFFECTS[rule.id],
+}));
 
 function normalizeCodeInput(value) {
   let text = value.trim().toLowerCase();
