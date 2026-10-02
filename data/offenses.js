@@ -1448,6 +1448,13 @@ window.EXPEDITER_OFFENSE_DATA = [
     code: "PC",
     section: "273a",
     name: "Child endangerment",
+    misdemeanorExposure: {
+      jail: "Varies",
+      basis: "PC § 273a(a)-(b)",
+      law: "PEN",
+      source: "273a",
+      note: "Subdivision matters. PC § 273a(a) is a wobbler with a misdemeanor alternative up to one year in county jail. PC § 273a(b) is a misdemeanor and, because it specifies no different jail term, carries the general six-month maximum under PC § 19."
+    },
     probation: {
       order: 4,
       status: "Eligible",
@@ -1455,25 +1462,117 @@ window.EXPEDITER_OFFENSE_DATA = [
       terms: [
         "Criminal protective order protecting the victim from further violence or threats, with stay-away or residence-exclusion conditions if appropriate.",
         "Successful completion of at least one year of an approved child-abuser treatment counseling program.",
-        "If the offense was committed while under the influence of drugs or alcohol: abstention during probation and random drug testing.",
-        "The court may waive a listed minimum condition if it finds the condition would not be in the interests of justice and states its reasons on the record."
+        "If the offense was committed while the defendant was under the influence of drugs or alcohol: abstention during probation and random drug testing.",
+        "The court may waive a listed minimum condition if it finds the condition would not be in the best interests of justice and states its reasons on the record."
       ],
-      note: "These conditions are stated in PC § 273a(c).",
+      note: "PC § 273a(c) supplies these minimum conditions when probation is granted.",
       sources: [["PEN","273a","PC § 273a(c)"]]
     },
     metadata: {
-      provenance: "Existing Reference Desk lookup data",
+      provenance: "Existing Reference Desk lookup data, updated after statute review",
       authorities: [
         {
           "type": "statute",
           "law": "PEN",
           "section": "273a",
-          "label": "PC § 273a(c)"
+          "label": "PC § 273a(a)-(c)"
+        },
+        {
+          "type": "statute",
+          "law": "PEN",
+          "section": "19",
+          "label": "PC § 19"
         }
       ],
       verification: {
-        status: "not reverified during metadata migration",
-        checkedThrough: null
+        status: "verified against current California statutory text",
+        checkedThrough: "2026-10-02"
+      }
+    }
+  },
+  {
+    code: "PC",
+    section: "273a(a)",
+    name: "Child endangerment — likely great bodily harm or death",
+    misdemeanorExposure: {
+      jail: "1 year",
+      basis: "PC § 273a(a)",
+      law: "PEN",
+      source: "273a",
+      note: "A wobbler. The misdemeanor alternative is county jail not exceeding one year; felony punishment is two, four, or six years."
+    },
+    probation: {
+      order: 14,
+      status: "Eligible",
+      term: "Minimum 48 months if probation is granted",
+      terms: [
+        "Criminal protective order protecting the victim from further violence or threats, with stay-away or residence-exclusion conditions if appropriate.",
+        "Successful completion of no less than one year of an approved child-abuser treatment counseling program.",
+        "If the offense was committed while the defendant was under the influence of drugs or alcohol: abstention during probation and random drug testing.",
+        "The court may waive a listed minimum condition if it finds the condition would not be in the best interests of justice and states its reasons on the record."
+      ],
+      note: "PC § 273a(c) applies these minimum probation conditions to a conviction under this section when probation is granted.",
+      sources: [["PEN","273a","PC § 273a(a), (c)"]]
+    },
+    metadata: {
+      provenance: "Added to Reference Desk after statute review",
+      authorities: [
+        {
+          "type": "statute",
+          "law": "PEN",
+          "section": "273a",
+          "label": "PC § 273a(a), (c)"
+        }
+      ],
+      verification: {
+        status: "verified against current California statutory text",
+        checkedThrough: "2026-10-02"
+      }
+    }
+  },
+  {
+    code: "PC",
+    section: "273a(b)",
+    name: "Child endangerment — not likely great bodily harm or death",
+    misdemeanorExposure: {
+      jail: "6 months",
+      basis: "PC §§ 273a(b) & 19",
+      law: "PEN",
+      source: "273a",
+      note: "Subdivision (b) is a misdemeanor. Because § 273a(b) states no different jail term, PC § 19 supplies the general maximum of six months in county jail."
+    },
+    probation: {
+      order: 15,
+      status: "Eligible",
+      term: "Minimum 48 months if probation is granted",
+      terms: [
+        "Criminal protective order protecting the victim from further violence or threats, with stay-away or residence-exclusion conditions if appropriate.",
+        "Successful completion of no less than one year of an approved child-abuser treatment counseling program.",
+        "If the offense was committed while the defendant was under the influence of drugs or alcohol: abstention during probation and random drug testing.",
+        "The court may waive a listed minimum condition if it finds the condition would not be in the best interests of justice and states its reasons on the record."
+      ],
+      note: "PC § 273a(c) applies these minimum probation conditions to a conviction under this section when probation is granted.",
+      sources: [["PEN","273a","PC § 273a(b), (c)"],["PEN","19","PC § 19"]]
+    },
+    metadata: {
+      provenance: "Added to Reference Desk after statute review",
+      authorities: [
+        {
+          "type": "statute",
+          "law": "PEN",
+          "section": "273a",
+          "label": "PC § 273a(b), (c)"
+        },
+        {
+          "type": "statute",
+          "law": "PEN",
+          "section": "19",
+          "label": "PC § 19"
+        }
+      ],
+      verification: {
+        status: "verified against current California statutory text",
+        checkedThrough: "2026-10-02"
       }
     }
   },
