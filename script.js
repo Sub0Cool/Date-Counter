@@ -738,78 +738,19 @@ const probationTerms = document.querySelector("#probation-terms");
 const probationNote = document.querySelector("#probation-note");
 const probationLinks = document.querySelector("#probation-links");
 
-const PROBATION_RULES = [
-  {
-    code:"PC", section:"243(e)(1)", name:"Domestic battery",
-    status:"Eligible", term:"Minimum 36 months",
-    terms:[
-      "Criminal protective order protecting the victim.",
-      "Booking within one week of sentencing if the defendant has not already been booked.",
-      "$500 domestic-violence program fee, subject to the statute's ability-to-pay reduction or waiver provisions.",
-      "Successful completion of a batterer's program for at least one year, with required progress reporting.",
-      "Appropriate community service.",
-      "A qualifying prior PC § 243(e)(1) or § 273.5 conviction triggers at least 48 hours in jail if probation is granted, unless the court finds good cause not to impose it."
-    ],
-    note:"PC § 1203.097 supplies the mandatory domestic-violence probation terms. PC § 243(e)(1) adds the prior-related custody provision.",
-    sources:[["PEN","1203.097","PC § 1203.097"],["PEN","243","PC § 243(e)(1)"]]
-  },
-  {
-    code:"PC", section:"273.5", name:"Corporal injury to spouse or cohabitant",
-    status:"Eligible", term:"Minimum 36 months",
-    terms:[
-      "Probation must be imposed consistently with PC § 1203.097, including its protective-order, batterer's-program, booking, fee, and community-service requirements.",
-      "One qualifying prior listed in PC § 273.5(f) within seven years: at least 15 days county jail as a probation condition, absent a good-cause finding.",
-      "Two or more qualifying priors within seven years: at least 60 days county jail as a probation condition, absent a good-cause finding."
-    ],
-    note:"PC § 273.5 expressly incorporates § 1203.097 when probation is granted.",
-    sources:[["PEN","273.5","PC § 273.5(g)-(h)"],["PEN","1203.097","PC § 1203.097"]]
-  },
-  {
-    code:"PC", section:"166(c)(1)", name:"Violation of specified protective or stay-away order",
-    status:"Eligible", term:"Minimum 36 months",
-    terms:[
-      "Probation must be imposed consistently with PC § 1203.097.",
-      "If the violation results in physical injury, PC § 166(c)(2) requires at least 48 hours in county jail whether a fine or imprisonment is imposed or the sentence is suspended."
-    ],
-    note:"PC § 166(e)(1) expressly requires § 1203.097-compliant probation for a conviction under subdivision (c).",
-    sources:[["PEN","166","PC § 166(c), (e)"],["PEN","1203.097","PC § 1203.097"]]
-  },
-  {
-    code:"PC", section:"273.6", name:"Violation of protective order",
-    status:"Generally eligible", term:"Depends on order / victim relationship",
-    terms:[
-      "If the offense is a crime in which the victim is a person defined in Family Code § 6211, PC § 1203.097 requires the domestic-violence probation conditions, including a minimum 36-month term.",
-      "Injury, repeat violations, and the type of protective order can create additional custody consequences."
-    ],
-    note:"Because § 273.6 covers multiple kinds of protective orders, the probation conditions cannot be determined from the section number alone.",
-    sources:[["PEN","1203.097","PC § 1203.097"]]
-  },
-  {
-    code:"PC", section:"273a", name:"Child endangerment",
-    status:"Eligible", term:"Minimum 48 months if probation is granted",
-    terms:[
-      "Criminal protective order protecting the victim from further violence or threats, with stay-away or residence-exclusion conditions if appropriate.",
-      "Successful completion of at least one year of an approved child-abuser treatment counseling program.",
-      "If the offense was committed while under the influence of drugs or alcohol: abstention during probation and random drug testing.",
-      "The court may waive a listed minimum condition if it finds the condition would not be in the interests of justice and states its reasons on the record."
-    ],
-    note:"These conditions are stated in PC § 273a(c).",
-    sources:[["PEN","273a","PC § 273a(c)"]]
-  },
-  {
-    code:"VC", section:"23152", name:"Driving under the influence",
-    status:"Eligible", term:"3 to 5 years",
-    terms:[
-      "No driving with any measurable amount of alcohol in the blood.",
-      "If arrested for DUI, no refusal to submit to the chemical testing required by law.",
-      "No commission of any criminal offense.",
-      "For a first-offense probation sentence under VC § 23538: statutory fine and, where an approved program is available, enrollment in and completion of the required DUI program.",
-      "First offender with BAC below 0.20%: at least a three-month licensed DUI program; BAC 0.20% or more or chemical-test refusal: at least a nine-month program."
-    ],
-    note:"VC § 23600 supplies the core DUI probation terms; VC § 23538 supplies additional first-offender probation conditions.",
-    sources:[["VEH","23600","VC § 23600"],["VEH","23538","VC § 23538"]]
-  }
-];
+const PROBATION_RULES = (window.EXPEDITER_OFFENSE_DATA || [])
+  .filter((offense) => offense.probation)
+  .sort((a, b) => a.probation.order - b.probation.order)
+  .map((offense) => ({
+    code: offense.code,
+    section: offense.section,
+    name: offense.name,
+    status: offense.probation.status,
+    term: offense.probation.term,
+    terms: offense.probation.terms,
+    note: offense.probation.note,
+    sources: offense.probation.sources,
+  }));
 
 function normalizeProbationQuery(value) {
   const codeQuery = normalizeExposureInput(value);
