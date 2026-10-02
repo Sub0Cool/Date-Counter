@@ -2504,3 +2504,487 @@ window.EXPEDITER_OFFENSE_DATA = [
     }
   }
 ];
+
+// Maximum base penal-fine data used by Eligibility & Terms.
+// These figures exclude penalty assessments, restitution, program fees, and other add-ons.
+window.REFERENCE_DESK_MAX_PENAL_FINE_DATA = {
+  "PC 240": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "241",
+    "label": "PC § 241(a)"
+  },
+  "PC 242": {
+    "display": "$2,000",
+    "law": "PEN",
+    "section": "243",
+    "label": "PC § 243(a)"
+  },
+  "PC 243(e)(1)": {
+    "display": "$2,000",
+    "law": "PEN",
+    "section": "243",
+    "label": "PC § 243(e)(1)"
+  },
+  "PC 273.5": {
+    "display": "$6,000; up to $10,000 with a qualifying prior",
+    "law": "PEN",
+    "section": "273.5",
+    "label": "PC § 273.5(a), (f)"
+  },
+  "PC 273.6": {
+    "display": "$1,000; up to $2,000 for specified injury/repeat violations",
+    "law": "PEN",
+    "section": "273.6",
+    "label": "PC § 273.6(a)-(e)"
+  },
+  "PC 166(c)(1)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "166",
+    "label": "PC § 166(c)(1)"
+  },
+  "PC 245(a)(1)": {
+    "display": "$10,000",
+    "law": "PEN",
+    "section": "245",
+    "label": "PC § 245(a)(1)"
+  },
+  "PC 422": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "VC 2800.1": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "VC 20002": {
+    "display": "$1,000",
+    "law": "VEH",
+    "section": "20002",
+    "label": "VC § 20002(c)"
+  },
+  "HS 11364": {
+    "display": "$500",
+    "law": "HSC",
+    "section": "11374",
+    "label": "HSC § 11374"
+  },
+  "HS 11550": {
+    "display": "$70 additional statutory fine",
+    "law": "HSC",
+    "section": "11550",
+    "label": "HSC § 11550(d)"
+  },
+  "PC 69": {
+    "display": "$10,000",
+    "law": "PEN",
+    "section": "69",
+    "label": "PC § 69(a)"
+  },
+  "PC 136.1": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 148": {
+    "display": "$1,000 for § 148(a)(1); other subdivisions vary",
+    "law": "PEN",
+    "section": "148",
+    "label": "PC § 148"
+  },
+  "PC 148.9": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "19",
+    "label": "PC § 19"
+  },
+  "PC 243(b)": {
+    "display": "$2,000",
+    "law": "PEN",
+    "section": "243",
+    "label": "PC § 243(b)"
+  },
+  "PC 243(c)": {
+    "display": "$2,000 generally; up to $10,000 under § 243(c)(2)",
+    "law": "PEN",
+    "section": "243",
+    "label": "PC § 243(c)"
+  },
+  "PC 243(d)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 245(a)(4)": {
+    "display": "$10,000",
+    "law": "PEN",
+    "section": "245",
+    "label": "PC § 245(a)(4)"
+  },
+  "PC 417": {
+    "display": "Varies by subdivision; commonly up to $1,000",
+    "law": "PEN",
+    "section": "417",
+    "label": "PC § 417"
+  },
+  "PC 417(a)(2)(A)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "417",
+    "label": "PC § 417(a)(2)(A)"
+  },
+  "PC 417.4": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 452(d)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "19",
+    "label": "PC § 19"
+  },
+  "PC 459.5": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 466": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "19",
+    "label": "PC § 19"
+  },
+  "PC 484": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "490",
+    "label": "PC § 490"
+  },
+  "PC 484e": {
+    "display": "Varies by conduct; misdemeanor maximum generally $1,000",
+    "law": "PEN",
+    "section": "484e",
+    "label": "PC § 484e"
+  },
+  "PC 487": {
+    "display": "$1,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 496": {
+    "display": "$1,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 529": {
+    "display": "$10,000",
+    "law": "PEN",
+    "section": "529",
+    "label": "PC § 529(b)"
+  },
+  "PC 530.5(e)": {
+    "display": "Fine authorized; § 530.5(e) does not state a dollar cap",
+    "law": "PEN",
+    "section": "530.5",
+    "label": "PC § 530.5(e)"
+  },
+  "PC 537(a)(1)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "537",
+    "label": "PC § 537(a)(1)"
+  },
+  "PC 537(a)(2)": {
+    "display": "$1,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 594": {
+    "display": "Up to $50,000 depending on damage amount; lower caps may apply",
+    "law": "PEN",
+    "section": "594",
+    "label": "PC § 594(b)"
+  },
+  "PC 602": {
+    "display": "Varies by subdivision",
+    "law": "PEN",
+    "section": "602",
+    "label": "PC § 602"
+  },
+  "PC 602.1": {
+    "display": "$400",
+    "law": "PEN",
+    "section": "602.1",
+    "label": "PC § 602.1(a)-(b)"
+  },
+  "PC 602.5": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "602.5",
+    "label": "PC § 602.5(b)"
+  },
+  "PC 647": {
+    "display": "Varies by subdivision",
+    "law": "PEN",
+    "section": "647",
+    "label": "PC § 647"
+  },
+  "PC 21310": {
+    "display": "$1,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 25400": {
+    "display": "$1,000 for misdemeanor forms",
+    "law": "PEN",
+    "section": "25400",
+    "label": "PC § 25400(c)"
+  },
+  "PC 21510(b)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "VC 4462.5": {
+    "display": "$1,000",
+    "law": "VEH",
+    "section": "42002",
+    "label": "VC § 42002"
+  },
+  "VC 14601s": {
+    "display": "Varies by section/prior; § 14601 reaches $2,000 on a qualifying repeat",
+    "law": "VEH",
+    "section": "14601",
+    "label": "VC § 14601"
+  },
+  "VC 14601": {
+    "display": "$1,000 first / $2,000 qualifying repeat",
+    "law": "VEH",
+    "section": "14601",
+    "label": "VC § 14601(b)"
+  },
+  "VC 20001": {
+    "display": "$10,000",
+    "law": "VEH",
+    "section": "20001",
+    "label": "VC § 20001(b)"
+  },
+  "VC 23109": {
+    "display": "$1,000 for a speed contest; lower caps apply to some other forms",
+    "law": "VEH",
+    "section": "23109",
+    "label": "VC § 23109"
+  },
+  "HS 11350": {
+    "display": "$70 additional statutory fine",
+    "law": "HSC",
+    "section": "11350",
+    "label": "HSC § 11350(b)"
+  },
+  "HS 11357": {
+    "display": "$500 maximum for misdemeanor adult-possession forms",
+    "law": "HSC",
+    "section": "11357",
+    "label": "HSC § 11357"
+  },
+  "HS 11377": {
+    "display": "$70 additional statutory fine",
+    "law": "HSC",
+    "section": "11377",
+    "label": "HSC § 11377(b)"
+  },
+  "PC 273a": {
+    "display": "$1,000 for misdemeanor treatment",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 273a(a)": {
+    "display": "$1,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 273a(b)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "19",
+    "label": "PC § 19"
+  },
+  "VC 23152": {
+    "display": "$1,000 for a first-offense misdemeanor DUI",
+    "law": "VEH",
+    "section": "23536",
+    "label": "VC § 23536(a)"
+  },
+  "PC 30305": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "30305",
+    "label": "PC § 30305(a)"
+  },
+  "PC 236": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "237",
+    "label": "PC § 237(a)"
+  },
+  "VC 23103": {
+    "display": "$1,000",
+    "law": "VEH",
+    "section": "23103",
+    "label": "VC § 23103(c)"
+  },
+  "VC 23103.5": {
+    "display": "$1,000",
+    "law": "VEH",
+    "section": "23103",
+    "label": "VC § 23103(c)"
+  },
+  "PC 148.4": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "148.4",
+    "label": "PC § 148.4(a)"
+  },
+  "PC 647(h)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "19",
+    "label": "PC § 19"
+  },
+  "PC 25850(a)": {
+    "display": "$1,000 for misdemeanor forms",
+    "law": "PEN",
+    "section": "25850",
+    "label": "PC § 25850(c)(5)-(7)"
+  },
+  "PC 243.6": {
+    "display": "$2,000",
+    "law": "PEN",
+    "section": "243.6",
+    "label": "PC § 243.6"
+  },
+  "PC 241(c)": {
+    "display": "$2,000",
+    "law": "PEN",
+    "section": "241",
+    "label": "PC § 241(c)"
+  },
+  "VC 4461(c)": {
+    "display": "$1,000",
+    "law": "VEH",
+    "section": "4461",
+    "label": "VC § 4461(c)"
+  },
+  "PC 368(b)(1)": {
+    "display": "$6,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "368",
+    "label": "PC § 368(b)(1)"
+  },
+  "PC 368(c)": {
+    "display": "$1,000 first / $2,000 second or subsequent",
+    "law": "PEN",
+    "section": "368",
+    "label": "PC § 368(c)"
+  },
+  "PC 368(d)(1)": {
+    "display": "$2,500 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "368",
+    "label": "PC § 368(d)(1)"
+  },
+  "PC 368(d)(2)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "368",
+    "label": "PC § 368(d)(2)"
+  },
+  "PC 368(e)(1)": {
+    "display": "$2,500 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "368",
+    "label": "PC § 368(e)(1)"
+  },
+  "PC 368(e)(2)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "368",
+    "label": "PC § 368(e)(2)"
+  },
+  "PC 508": {
+    "display": "$1,000 for misdemeanor theft treatment",
+    "law": "PEN",
+    "section": "514",
+    "label": "PC § 514"
+  },
+  "PC 452(a)": {
+    "display": "Fine authorized; § 452(a) does not state a dollar cap",
+    "law": "PEN",
+    "section": "452",
+    "label": "PC § 452(a)"
+  },
+  "PC 452(b)": {
+    "display": "Fine authorized; § 452(b) does not state a dollar cap",
+    "law": "PEN",
+    "section": "452",
+    "label": "PC § 452(b)"
+  },
+  "PC 452(c)": {
+    "display": "Fine authorized; § 452(c) does not state a dollar cap",
+    "law": "PEN",
+    "section": "452",
+    "label": "PC § 452(c)"
+  },
+  "PC 602(m)": {
+    "display": "$1,000",
+    "law": "PEN",
+    "section": "19",
+    "label": "PC § 19"
+  },
+  "PC 502(c)(7)": {
+    "display": "$5,000 for misdemeanor treatment; first/no-injury infraction up to $1,000",
+    "law": "PEN",
+    "section": "502",
+    "label": "PC § 502(d)(3)"
+  },
+  "PC 243.25": {
+    "display": "$2,000",
+    "law": "PEN",
+    "section": "243.25",
+    "label": "PC § 243.25"
+  },
+  "PC 587(b)": {
+    "display": "$1,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  },
+  "PC 22210": {
+    "display": "$1,000 for the misdemeanor alternative",
+    "law": "PEN",
+    "section": "672",
+    "label": "PC § 672"
+  }
+};
+
+window.EXPEDITER_OFFENSE_DATA.forEach((offense) => {
+  const key = offense.code + " " + offense.section;
+  offense.maximumPenalFine = window.REFERENCE_DESK_MAX_PENAL_FINE_DATA[key] || null;
+});
