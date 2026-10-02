@@ -927,6 +927,16 @@ retrogradeForm.addEventListener("submit", (event) => {
     conversionLine =
       "The reported " + specimen + " value was converted to a whole-blood-equivalent range using serum/plasma-to-blood ratios of " +
       c.serumPlasmaRatioMin + "–" + c.serumPlasmaRatioMax + ".";
+
+    if (testLow < c.retrogradeMinimumAc) {
+      retroRange.textContent = "Not calculated";
+      retroQuality.textContent = "The converted whole-blood-equivalent range extends below 0.020 g/dL.";
+      renderParagraphs(retroCalculation, [
+        conversionLine,
+        "ASB 122 does not recommend retrograde extrapolation below 0.020 g/dL, so no estimate was produced."
+      ]);
+      return;
+    }
   }
 
   const low = testLow + c.eliminationRateMin * elapsed;
@@ -999,7 +1009,7 @@ function getVdEstimate(sex, weightKg, heightIn, age) {
   if (sex === "male" && heightIn && age) {
     const heightCm = heightIn * c.cmPerIn;
     const tbw = 2.447 - (0.09516 * age) + (0.1074 * heightCm) + (0.3362 * weightKg);
-    const vd = (tbw / weightKg) * 0.825;
+    const vd = tbw / (weightKg * 0.825);
     const delta = vd * c.individualizedVd.maleCv;
     return {
       kind: "individualized",
@@ -1015,7 +1025,7 @@ function getVdEstimate(sex, weightKg, heightIn, age) {
   if (sex === "female" && heightIn) {
     const heightCm = heightIn * c.cmPerIn;
     const tbw = -2.097 + (0.1069 * heightCm) + (0.2466 * weightKg);
-    const vd = (tbw / weightKg) * 0.838;
+    const vd = tbw / (weightKg * 0.838);
     const delta = vd * c.individualizedVd.femaleCv;
     return {
       kind: "individualized",
