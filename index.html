@@ -25,7 +25,7 @@
             <p class="eyebrow">California criminal-law utilities</p>
             <h1 id="page-title">Reference Desk</h1>
             <p class="intro">
-              Quick-reference tools for custody credits, misdemeanor exposure, probation,
+              Quick-reference tools for custody credits, calendar dates, misdemeanor exposure, probation,
               firearm-prohibition checks, and blood alcohol estimation.
             </p>
           </div>
@@ -41,6 +41,18 @@
               <span class="tool-tile-kicker">Custody</span>
               <strong>Dates & § 4019 Credits</strong>
               <small>Count unique custody days and calculate standard conduct credits.</small>
+            </span>
+            <span class="tool-tile-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="tool-tile" type="button" data-tool-target="future-date" aria-pressed="false">
+            <span class="tool-tile-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32"><rect x="5" y="7" width="22" height="20" rx="3"></rect><path d="M10 4v6M22 4v6M5 13h22M10 19h5M19 17v6M16 20h6"></path></svg>
+            </span>
+            <span class="tool-tile-copy">
+              <span class="tool-tile-kicker">Dates</span>
+              <strong>Future Date Calculator</strong>
+              <small>Enter a period like “6 months” or “10 days” to find the exact future date.</small>
             </span>
             <span class="tool-tile-arrow" aria-hidden="true">→</span>
           </button>
@@ -179,6 +191,54 @@
               </aside>
             </section>
 
+          </div>
+        </section>
+
+        <section class="tool-panel tool-view" id="tool-future-date" data-tool-view="future-date" hidden>
+          <div class="tool-panel-body">
+            <section class="future-date-card" aria-labelledby="future-date-title">
+              <p class="eyebrow">Calendar calculator</p>
+              <h2 id="future-date-title">Future Date Calculator</h2>
+              <p class="future-date-intro">
+                Enter a length of time to see the exact calendar date from today.
+                Try <strong>6 months</strong>, <strong>10 days</strong>, <strong>3 weeks</strong>, or <strong>1 year</strong>.
+              </p>
+
+              <div class="future-date-today">
+                <span>Today</span>
+                <strong id="future-date-today">—</strong>
+              </div>
+
+              <form id="future-date-form" class="future-date-form">
+                <label for="future-date-input">How far in the future?</label>
+                <div class="lookup-controls">
+                  <input
+                    id="future-date-input"
+                    type="text"
+                    inputmode="text"
+                    autocomplete="off"
+                    placeholder="e.g., 6 months or 10 days"
+                    required
+                  />
+                  <button type="submit" class="lookup-button">Calculate date</button>
+                </div>
+                <p class="future-date-help">Supports days, weeks, months, and years.</p>
+              </form>
+
+              <div id="future-date-result" class="future-date-result" hidden aria-live="polite" aria-atomic="true">
+                <p class="eyebrow">Future date</p>
+                <strong id="future-date-output">—</strong>
+                <p id="future-date-summary"></p>
+              </div>
+
+              <p id="future-date-error" class="future-date-error" role="alert" hidden></p>
+
+              <aside class="legal-note">
+                <strong>Calendar rule:</strong> Days and weeks are added as calendar days.
+                Months and years preserve the calendar day when possible; if the target month does
+                not contain that day, the calculator uses the last day of that month.
+              </aside>
+            </section>
           </div>
         </section>
 
