@@ -244,20 +244,8 @@ window.REFERENCE_DESK_29805_RULES = [
     "sections": [
       "25850"
     ],
-    "subdivisionAny": [
-      [
-        "c",
-        "5"
-      ],
-      [
-        "c",
-        "6"
-      ],
-      [
-        "c",
-        "7"
-      ]
-    ],
+    "subdivision": null,
+    "conditional": true,
     "citation": "PC § 29805(f)"
   },
   {
