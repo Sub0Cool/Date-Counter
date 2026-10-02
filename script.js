@@ -779,3 +779,40 @@ probationForm.addEventListener("submit", (event) => {
 
   renderProbation(findProbationRule(query), query);
 });
+
+
+// Reference Desk dashboard navigation.
+const toolTiles = [...document.querySelectorAll("[data-tool-target]")];
+const toolViews = [...document.querySelectorAll("[data-tool-view]")];
+const activeToolTitle = document.querySelector("#active-tool-title");
+
+const toolTitles = {
+  dates: "Dates & Penal Code § 4019 Credits",
+  exposure: "Maximum Exposure Lookup",
+  probation: "Probation Eligibility & Mandatory Terms",
+  firearms: "Penal Code § 29805 Check",
+};
+
+function showTool(toolName) {
+  toolTiles.forEach((tile) => {
+    const active = tile.dataset.toolTarget === toolName;
+    tile.classList.toggle("is-active", active);
+    tile.setAttribute("aria-pressed", String(active));
+  });
+
+  toolViews.forEach((view) => {
+    view.hidden = view.dataset.toolView !== toolName;
+  });
+
+  if (activeToolTitle && toolTitles[toolName]) {
+    activeToolTitle.textContent = toolTitles[toolName];
+  }
+}
+
+toolTiles.forEach((tile) => {
+  tile.addEventListener("click", () => {
+    showTool(tile.dataset.toolTarget);
+  });
+});
+
+showTool("dates");
