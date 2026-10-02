@@ -1634,3 +1634,26 @@ h1 {
   color: var(--muted);
   line-height: 1.55;
 }
+
+
+.bac-assumption-note {
+  margin-top: 16px;
+  padding: 13px 15px;
+  color: var(--muted);
+  background: var(--mint-light);
+  border-left: 3px solid var(--green);
+  border-radius: 9px;
+}
+
+.bac-assumption-note strong {
+  display: block;
+  color: var(--green-dark);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+.bac-assumption-note p {
+  margin: 5px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
