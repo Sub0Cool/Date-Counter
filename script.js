@@ -945,31 +945,28 @@ retrogradeForm.addEventListener("submit", (event) => {
   const unit = specimen === "breath" ? "g/210 L" : "g/dL";
   retroRange.textContent = fmt(low) + "–" + fmt(high) + " " + unit;
 
-  let quality = "Estimate quality: Standard range — ASB elimination-rate range applied.";
+  let quality = "Estimate quality: Limited — absorption status not established.";
+  let absorptionStatus = "Post-absorptive status NOT assumed.";
   const warnings = [];
-
-  if (postStatus === "no") {
-    quality = "Estimate quality: Limited — continued absorption may make the post-absorptive estimate inappropriate.";
-    warnings.push("The subject is identified as not post-absorptive or potentially still absorbing alcohol. This result is shown only as the post-absorptive estimate and does not adjust for unabsorbed alcohol.");
-  } else if (postStatus === "unknown") {
-    quality = "Estimate quality: Limited — post-absorptive status is not established.";
-    warnings.push("ASB 122 states that when drinking history is unknown, it is not reasonable to assume the subject was post-absorptive.");
-  }
 
   if (lastDrink) {
     const targetSinceDrink = hoursBetween(lastDrink, targetTime);
+
     if (targetSinceDrink >= 2) {
-      quality = postStatus === "no"
-        ? quality
-        : "Estimate quality: Standard range — reported drinking cessation was at least 2 hours before the target time.";
+      quality = "Estimate quality: Standard range — reported drinking cessation was at least 2 hours before the target time.";
+      absorptionStatus = "Post-absorptive status ASSUMED based on the reported last drink occurring at least 2 hours before the target time.";
     } else if (targetSinceDrink >= 0) {
-      warnings.push("The reported last drink was less than 2 hours before the target time, so the post-absorptive assumption may not be supported.");
+      absorptionStatus = "Post-absorptive status NOT assumed because the reported last drink was less than 2 hours before the target time.";
+      warnings.push("Continued absorption may still have been occurring at the target time. The displayed range is the mathematical post-absorptive extrapolation and should be interpreted with this limitation.");
     } else {
+      absorptionStatus = "Post-absorptive status NOT assumed because the reported last-drink time is after the target time.";
       warnings.push("The reported last-drink time is after the target time, indicating possible post-incident drinking or an inconsistent timeline.");
     }
+  } else {
+    warnings.push("No last-drink time was provided. ASB 122 states that when drinking history is unknown, it is not reasonable to assume the subject was post-absorptive.");
   }
 
-  retroQuality.textContent = quality;
+  retroQuality.textContent = quality + " " + absorptionStatus;
   if (warnings.length) {
     retroWarning.hidden = false;
     retroWarning.textContent = warnings.join(" ");
@@ -980,6 +977,7 @@ retrogradeForm.addEventListener("submit", (event) => {
     conversionLine,
     "Elapsed time: " + elapsed.toFixed(2) + " hours.",
     "Elimination-rate range: " + c.eliminationRateMin.toFixed(3) + "–" + c.eliminationRateMax.toFixed(3) + " g/dL/hour.",
+    "Absorption assumption: " + absorptionStatus,
     "Equation: earlier concentration = test concentration + (elimination rate × elapsed time).",
     "Estimated earlier concentration: " + fmt(low) + "–" + fmt(high) + " " + unit + "."
   ]);
