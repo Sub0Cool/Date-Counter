@@ -417,11 +417,16 @@
                       <input id="retro-last-drink" type="datetime-local" />
                     </label>
 
-                    <div class="bac-inference-note">
-                      <span>Absorption status</span>
-                      <p>Reference Desk will infer whether post-absorptive status can reasonably be assumed from the reported last-drink time. If no last-drink time is provided, the calculation will not assume absorption was complete.</p>
-                    </div>
                   </div>
+
+                  <aside class="bac-assumption-note" aria-label="Absorption assumption">
+                    <strong>Absorption assumption</strong>
+                    <p>
+                      Reference Desk infers whether post-absorptive status can reasonably be assumed
+                      from the reported last-drink time. If no last-drink time is provided, the
+                      calculation will not assume absorption was complete.
+                    </p>
+                  </aside>
 
                   <button class="lookup-button bac-submit" type="submit">Calculate retrograde estimate</button>
                 </form>
