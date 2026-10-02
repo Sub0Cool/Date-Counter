@@ -1612,3 +1612,25 @@ h1 {
     justify-self: end;
   }
 }
+
+
+.bac-comparison {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.bac-comparison > strong {
+  display: block;
+  color: var(--green-dark);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.bac-comparison > p:last-child {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
