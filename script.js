@@ -409,6 +409,7 @@ const CENTRAL_MISDEMEANOR_EXPOSURE = (window.EXPEDITER_OFFENSE_DATA || [])
     law: offense.misdemeanorExposure.law,
     source: offense.misdemeanorExposure.source,
     note: offense.misdemeanorExposure.note,
+    maximumPenalFine: offense.maximumPenalFine || null,
   }));
 
 const MISDEMEANOR_EXPOSURE = [
@@ -675,6 +676,8 @@ const probationName = document.querySelector("#probation-name");
 const probationBadge = document.querySelector("#probation-badge");
 const probationStatus = document.querySelector("#probation-status");
 const probationTerm = document.querySelector("#probation-term");
+const probationMaxFine = document.querySelector("#probation-max-fine");
+const probationFineSource = document.querySelector("#probation-fine-source");
 const probationTermsWrap = document.querySelector("#probation-terms-wrap");
 const probationTerms = document.querySelector("#probation-terms");
 const probationNote = document.querySelector("#probation-note");
@@ -692,6 +695,7 @@ const PROBATION_RULES = (window.EXPEDITER_OFFENSE_DATA || [])
     terms: offense.probation.terms,
     note: offense.probation.note,
     sources: offense.probation.sources,
+    maximumPenalFine: offense.maximumPenalFine || null,
   }));
 
 function normalizeProbationQuery(value) {
@@ -739,6 +743,19 @@ function renderProbation(rule, query) {
   probationResult.hidden = false;
   probationTerms.replaceChildren();
   probationLinks.replaceChildren();
+  probationFineSource.hidden = true;
+  probationFineSource.removeAttribute("href");
+
+  const renderFine = (fine) => {
+    if (!fine) {
+      probationMaxFine.textContent = "Not loaded";
+      return;
+    }
+    probationMaxFine.textContent = fine.display;
+    probationFineSource.textContent = fine.label;
+    probationFineSource.href = legiUrl(fine.law, fine.section);
+    probationFineSource.hidden = false;
+  };
 
   if (rule) {
     probationResult.dataset.kind = rule.status === "Eligible" ? "loaded" : "varies";
@@ -747,6 +764,7 @@ function renderProbation(rule, query) {
     probationBadge.textContent = rule.status;
     probationStatus.textContent = rule.status;
     probationTerm.textContent = rule.term;
+    renderFine(rule.maximumPenalFine);
 
     rule.terms.forEach((term) => {
       const item = document.createElement("li");
@@ -770,6 +788,7 @@ function renderProbation(rule, query) {
       probationBadge.textContent = "Generally eligible";
       probationStatus.textContent = "Generally eligible";
       probationTerm.textContent = "Usually up to 1 year";
+      renderFine(exposureEntry.maximumPenalFine);
       probationTermsWrap.hidden = false;
 
       const item = document.createElement("li");
@@ -790,11 +809,11 @@ function renderProbation(rule, query) {
   probationBadge.textContent = "Not loaded";
   probationStatus.textContent = "Unknown";
   probationTerm.textContent = "—";
+  probationMaxFine.textContent = "—";
   probationTermsWrap.hidden = true;
   probationNote.textContent =
     "This does not mean probation is unavailable. The offense simply is not yet covered by this quick-reference table.";
 }
-
 probationForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const query = normalizeProbationQuery(probationLookup.value);
