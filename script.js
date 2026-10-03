@@ -1086,6 +1086,9 @@ retrogradeForm.addEventListener("submit", (event) => {
   retroResult.hidden = false;
   retroWarning.hidden = true;
   retroWarning.textContent = "";
+  retroDrinkingComparison.hidden = true;
+  retroDrinkingStatus.textContent = "";
+  retroDrinkingCopy.textContent = "";
 
   if (!Number.isFinite(measured) || measured < c.retrogradeMinimumAc) {
     retroRange.textContent = "Not calculated";
@@ -1136,10 +1139,6 @@ retrogradeForm.addEventListener("submit", (event) => {
 
   const unit = specimen === "breath" ? "g/210 L" : "g/dL";
   retroRange.textContent = fmt(low) + "–" + fmt(high) + " " + unit;
-
-  retroDrinkingComparison.hidden = true;
-  retroDrinkingStatus.textContent = "";
-  retroDrinkingCopy.textContent = "";
 
   const reportedDrinks = getDrinkHistory(retroDrinkRows);
   const retroWeightRaw = document.querySelector("#retro-weight").value;
