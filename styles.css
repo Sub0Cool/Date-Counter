@@ -1795,3 +1795,137 @@ h1 {
   border-radius: 9px;
   font-size: 0.84rem;
 }
+
+
+/* Multiple retrograde alcohol readings */
+.retro-readings-section {
+  margin-bottom: 18px;
+}
+
+.retro-timeline-grid {
+  margin-top: 18px;
+}
+
+.retro-reading-rows {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.retro-reading-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1.3fr) minmax(150px, 0.8fr) minmax(190px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.retro-reading-number {
+  align-self: center;
+  min-width: 70px;
+  color: var(--green-dark);
+  font-size: 0.75rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.retro-reading-row label {
+  display: grid;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.retro-reading-row label small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.remove-reading {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.retro-reading-results {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.retro-reading-result {
+  padding: 13px 15px;
+  background: var(--mint-light);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.retro-reading-result.is-invalid {
+  background: #f8edef;
+}
+
+.retro-reading-result-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: baseline;
+}
+
+.retro-reading-result-heading strong {
+  color: var(--green-dark);
+}
+
+.retro-reading-result-heading span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.retro-reading-result-range {
+  margin: 7px 0 0;
+  color: var(--ink);
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+.retro-reading-result-error {
+  margin: 7px 0 0;
+  color: var(--error);
+  line-height: 1.45;
+}
+
+@media (max-width: 860px) {
+  .retro-reading-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .retro-reading-number {
+    grid-column: 1 / -1;
+  }
+
+  .remove-reading {
+    justify-self: end;
+  }
+}
+
+@media (max-width: 640px) {
+  .retro-reading-row {
+    grid-template-columns: 1fr;
+  }
+
+  .retro-reading-result-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
