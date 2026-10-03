@@ -1017,12 +1017,40 @@ const retroRange = document.querySelector("#retro-range");
 const retroQuality = document.querySelector("#retro-quality");
 const retroWarning = document.querySelector("#retro-warning");
 const retroCalculation = document.querySelector("#retro-calculation");
+const retroReadingRows = document.querySelector("#retro-reading-rows");
+const retroReadingTemplate = document.querySelector("#retro-reading-template");
+const retroAddReadingButton = document.querySelector("#retro-add-reading");
+const retroReadingResults = document.querySelector("#retro-reading-results");
+const retroMultiComparison = document.querySelector("#retro-multi-comparison");
+const retroMultiStatus = document.querySelector("#retro-multi-status");
+const retroMultiCopy = document.querySelector("#retro-multi-copy");
 const retroDrinkRows = document.querySelector("#retro-drink-rows");
 const retroAddDrinkButton = document.querySelector("#retro-add-drink");
 const retroDrinkingComparison = document.querySelector("#retro-drinking-comparison");
 const retroDrinkingStatus = document.querySelector("#retro-drinking-status");
 const retroDrinkingCopy = document.querySelector("#retro-drinking-copy");
 const drinkTemplate = document.querySelector("#drink-row-template");
+
+function renumberRetroReadings() {
+  [...retroReadingRows.children].forEach((row, index) => {
+    row.querySelector(".retro-reading-number").textContent = "Reading " + (index + 1);
+  });
+}
+
+function appendRetroReading() {
+  const row = retroReadingTemplate.content.firstElementChild.cloneNode(true);
+  retroReadingRows.append(row);
+  renumberRetroReadings();
+}
+
+retroAddReadingButton.addEventListener("click", appendRetroReading);
+retroReadingRows.addEventListener("click", (event) => {
+  const remove = event.target.closest(".remove-reading");
+  if (!remove || retroReadingRows.children.length === 1) return;
+  remove.closest(".retro-reading-row").remove();
+  renumberRetroReadings();
+});
+appendRetroReading();
 
 function appendDrinkRow(container) {
   const row = drinkTemplate.content.firstElementChild.cloneNode(true);
@@ -1072,13 +1100,103 @@ function getDrinkHistory(container) {
 
 wireDrinkRows(retroDrinkRows, retroAddDrinkButton, false);
 
+function getRetroReadingEstimate(row, index, targetTime, c) {
+  const measured = Number(row.querySelector(".retro-reading-value").value);
+  const specimen = row.querySelector(".retro-reading-specimen").value;
+  const testTime = new Date(row.querySelector(".retro-reading-time").value);
+  const label = "Reading " + (index + 1);
+
+  if (!Number.isFinite(measured)) {
+    return { valid: false, label, reason: "Enter a valid alcohol concentration." };
+  }
+  if (specimen === "urine") {
+    return { valid: false, label, reason: "Urine alcohol results are not used for retrograde extrapolation under ASB 122." };
+  }
+  if (Number.isNaN(testTime.getTime()) || targetTime >= testTime) {
+    return { valid: false, label, reason: "The test/draw time must be later than the target time." };
+  }
+
+  let testLow = measured;
+  let testHigh = measured;
+  let conversionLine = "No specimen conversion was required.";
+  let unitClass = specimen === "breath" ? "breath" : "blood";
+
+  if (specimen === "serum" || specimen === "plasma") {
+    testLow = measured / c.serumPlasmaRatioMax;
+    testHigh = measured / c.serumPlasmaRatioMin;
+    conversionLine =
+      "Converted " + specimen + " result to a whole-blood-equivalent range using ratios of " +
+      c.serumPlasmaRatioMin + "–" + c.serumPlasmaRatioMax + ".";
+  }
+
+  if (testLow < c.retrogradeMinimumAc) {
+    return {
+      valid: false,
+      label,
+      reason: "The result (or low end of its converted range) is below 0.020, so no retrograde estimate was produced."
+    };
+  }
+
+  const elapsed = hoursBetween(targetTime, testTime);
+  const low = testLow + c.eliminationRateMin * elapsed;
+  const high = testHigh + c.eliminationRateMax * elapsed;
+  const unit = specimen === "breath" ? "g/210 L" : "g/dL";
+
+  return {
+    valid: true,
+    label,
+    measured,
+    specimen,
+    testTime,
+    elapsed,
+    testLow,
+    testHigh,
+    low,
+    high,
+    unit,
+    unitClass,
+    conversionLine
+  };
+}
+
+function renderRetroReadingCards(estimates) {
+  retroReadingResults.replaceChildren();
+
+  estimates.forEach((estimate) => {
+    const card = document.createElement("div");
+    card.className = "retro-reading-result" + (estimate.valid ? "" : " is-invalid");
+
+    const heading = document.createElement("div");
+    heading.className = "retro-reading-result-heading";
+
+    const title = document.createElement("strong");
+    title.textContent = estimate.label;
+    heading.append(title);
+
+    if (estimate.valid) {
+      const time = document.createElement("span");
+      time.textContent = estimate.testTime.toLocaleString();
+      heading.append(time);
+
+      const range = document.createElement("p");
+      range.className = "retro-reading-result-range";
+      range.textContent = fmt(estimate.low) + "–" + fmt(estimate.high) + " " + estimate.unit;
+      card.append(heading, range);
+    } else {
+      const reason = document.createElement("p");
+      reason.className = "retro-reading-result-error";
+      reason.textContent = estimate.reason;
+      card.append(heading, reason);
+    }
+
+    retroReadingResults.append(card);
+  });
+}
+
 retrogradeForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const c = BAC_METHODS.constants;
-  const measured = Number(document.querySelector("#retro-bac").value);
-  const specimen = document.querySelector("#retro-specimen").value;
-  const testTime = new Date(document.querySelector("#retro-test-time").value);
   const targetTime = new Date(document.querySelector("#retro-target-time").value);
   const lastDrinkRaw = document.querySelector("#retro-last-drink").value;
   const lastDrink = lastDrinkRaw ? new Date(lastDrinkRaw) : null;
@@ -1086,59 +1204,103 @@ retrogradeForm.addEventListener("submit", (event) => {
   retroResult.hidden = false;
   retroWarning.hidden = true;
   retroWarning.textContent = "";
+  retroMultiComparison.hidden = true;
+  retroMultiStatus.textContent = "";
+  retroMultiCopy.textContent = "";
   retroDrinkingComparison.hidden = true;
   retroDrinkingStatus.textContent = "";
   retroDrinkingCopy.textContent = "";
+  retroReadingResults.replaceChildren();
 
-  if (!Number.isFinite(measured) || measured < c.retrogradeMinimumAc) {
-    retroRange.textContent = "Not calculated";
-    retroQuality.textContent = "ASB 122 does not recommend retrograde extrapolation below 0.020 g/dL.";
+  if (Number.isNaN(targetTime.getTime())) {
+    retroRange.textContent = "Check target time";
+    retroQuality.textContent = "Enter a valid earlier target time.";
     renderParagraphs(retroCalculation, ["No estimate was produced."]);
     return;
   }
 
-  if (specimen === "urine") {
+  const estimates = [...retroReadingRows.children].map((row, index) =>
+    getRetroReadingEstimate(row, index, targetTime, c)
+  );
+  const validEstimates = estimates.filter((estimate) => estimate.valid);
+
+  renderRetroReadingCards(estimates);
+
+  if (!validEstimates.length) {
     retroRange.textContent = "Not calculated";
-    retroQuality.textContent = "Urine alcohol results are not amenable to retrograde extrapolation under ASB 122.";
-    renderParagraphs(retroCalculation, ["No estimate was produced from the urine result."]);
+    retroQuality.textContent = "No entered reading could be used for retrograde extrapolation.";
+    renderParagraphs(retroCalculation, estimates.map((estimate) => estimate.label + ": " + estimate.reason));
     return;
   }
 
-  if (Number.isNaN(testTime.getTime()) || Number.isNaN(targetTime.getTime()) || targetTime >= testTime) {
-    retroRange.textContent = "Check times";
-    retroQuality.textContent = "The target time must be earlier than the test or draw time.";
-    renderParagraphs(retroCalculation, ["No estimate was produced."]);
-    return;
+  if (validEstimates.length === 1) {
+    const estimate = validEstimates[0];
+    retroRange.textContent = fmt(estimate.low) + "–" + fmt(estimate.high) + " " + estimate.unit;
+  } else {
+    retroRange.textContent = validEstimates.length + " independent estimates";
   }
 
-  const elapsed = hoursBetween(targetTime, testTime);
-  let testLow = measured;
-  let testHigh = measured;
-  let conversionLine = "No specimen conversion was required.";
+  let quality = "Estimate quality: Limited — absorption status not established.";
+  let absorptionStatus = "Post-absorptive status NOT assumed.";
+  const warnings = [];
 
-  if (specimen === "serum" || specimen === "plasma") {
-    testLow = measured / c.serumPlasmaRatioMax;
-    testHigh = measured / c.serumPlasmaRatioMin;
-    conversionLine =
-      "The reported " + specimen + " value was converted to a whole-blood-equivalent range using serum/plasma-to-blood ratios of " +
-      c.serumPlasmaRatioMin + "–" + c.serumPlasmaRatioMax + ".";
+  if (lastDrink) {
+    const targetSinceDrink = hoursBetween(lastDrink, targetTime);
 
-    if (testLow < c.retrogradeMinimumAc) {
-      retroRange.textContent = "Not calculated";
-      retroQuality.textContent = "The converted whole-blood-equivalent range extends below 0.020 g/dL.";
-      renderParagraphs(retroCalculation, [
-        conversionLine,
-        "ASB 122 does not recommend retrograde extrapolation below 0.020 g/dL, so no estimate was produced."
-      ]);
-      return;
+    if (targetSinceDrink >= 2) {
+      quality = "Estimate quality: Standard ranges — reported drinking cessation was at least 2 hours before the target time.";
+      absorptionStatus = "Post-absorptive status ASSUMED based on the reported last drink occurring at least 2 hours before the target time.";
+    } else if (targetSinceDrink >= 0) {
+      absorptionStatus = "Post-absorptive status NOT assumed because the reported last drink was less than 2 hours before the target time.";
+      warnings.push("Continued absorption may still have been occurring at the target time. The displayed ranges are mathematical post-absorptive extrapolations and should be interpreted with this limitation.");
+    } else {
+      absorptionStatus = "Post-absorptive status NOT assumed because the reported last-drink time is after the target time.";
+      warnings.push("The reported last-drink time is after the target time, indicating possible post-incident drinking or an inconsistent timeline.");
     }
+  } else {
+    warnings.push("No last-drink time was provided. ASB 122 states that when drinking history is unknown, it is not reasonable to assume the subject was post-absorptive.");
   }
 
-  const low = testLow + c.eliminationRateMin * elapsed;
-  const high = testHigh + c.eliminationRateMax * elapsed;
+  retroQuality.textContent = quality + " " + absorptionStatus;
 
-  const unit = specimen === "breath" ? "g/210 L" : "g/dL";
-  retroRange.textContent = fmt(low) + "–" + fmt(high) + " " + unit;
+  const comparableClasses = new Set(validEstimates.map((estimate) => estimate.unitClass));
+  let multiSummary = null;
+
+  if (validEstimates.length > 1) {
+    retroMultiComparison.hidden = false;
+
+    if (comparableClasses.size > 1) {
+      retroMultiStatus.textContent = "Multiple readings were analyzed independently.";
+      retroMultiCopy.textContent =
+        "The entered results include both breath and blood-based measurements, so Reference Desk does not collapse them into a single combined range. Review the individual extrapolations together.";
+      multiSummary =
+        "Multiple-reading comparison: mixed breath and blood-based results were kept as separate independent estimates.";
+    } else {
+      const overlapLow = Math.max(...validEstimates.map((estimate) => estimate.low));
+      const overlapHigh = Math.min(...validEstimates.map((estimate) => estimate.high));
+      const unit = validEstimates[0].unit;
+
+      if (overlapLow <= overlapHigh) {
+        retroMultiStatus.textContent = "The independent retrograde ranges overlap.";
+        retroMultiCopy.textContent =
+          "The entered readings independently produce overlapping target-time ranges. Their numerical overlap is " +
+          fmt(overlapLow) + "–" + fmt(overlapHigh) + " " + unit +
+          ". This overlap is shown as a consistency check, not as a replacement for the ASB 122 elimination-rate range.";
+        multiSummary =
+          "Multiple-reading comparison: independent ranges overlap numerically at " +
+          fmt(overlapLow) + "–" + fmt(overlapHigh) + " " + unit + ".";
+      } else {
+        retroMultiStatus.textContent = "The independent retrograde ranges do not overlap.";
+        retroMultiCopy.textContent =
+          "The readings produce non-overlapping target-time ranges under the same ASB 122 elimination-rate assumptions. Review timing, absorption status, specimen differences, analytical uncertainty, and case history before drawing conclusions.";
+        multiSummary = "Multiple-reading comparison: independent target-time ranges do not overlap.";
+        warnings.push("The entered alcohol readings do not produce overlapping retrograde ranges.");
+      }
+    }
+
+    retroMultiCopy.textContent +=
+      " ASB 122 specifically advises that an elimination rate calculated from two or more test results should not be used in place of an elimination-rate range.";
+  }
 
   const reportedDrinks = getDrinkHistory(retroDrinkRows);
   const retroWeightRaw = document.querySelector("#retro-weight").value;
@@ -1158,37 +1320,36 @@ retrogradeForm.addEventListener("submit", (event) => {
     if (!Number.isFinite(retroWeightLb) || retroWeightLb <= 0) {
       retroDrinkingStatus.textContent = "Weight is needed for the reported-drinking comparison.";
       retroDrinkingCopy.textContent =
-        "The retrograde estimate above is still valid. Enter body weight to calculate the theoretical maximum alcohol concentration from the reported drinks.";
+        "The retrograde estimates above are still available. Enter body weight to calculate the theoretical maximum alcohol concentration from the reported drinks.";
       drinkingComparisonSummary = "Reported-drinking comparison not calculated because body weight was not provided.";
     } else {
       const weightKg = retroWeightLb * c.kgPerLb;
       const vd = getVdEstimate(retroSex, weightKg, retroHeightIn, retroAge);
       const theoreticalLow = reportedDrinks.grams / (vd.high * weightKg * 10);
       const theoreticalHigh = reportedDrinks.grams / (vd.low * weightKg * 10);
-      const insufficient = theoreticalHigh < low;
+      const estimatesNotAccountedFor = validEstimates.filter((estimate) => theoreticalHigh < estimate.low);
 
       drinkingMethodSummary =
         "Reported drinks theoretical maximum: " + fmt(theoreticalLow) + "–" +
         fmt(theoreticalHigh) + " g/dL using " + BAC_METHODS.definitions[vd.kind].label + ".";
 
-      if (insufficient) {
+      if (estimatesNotAccountedFor.length) {
         retroDrinkingStatus.textContent =
-          "Reported drinking history does not account for the retrograde estimate under this model.";
+          "Reported drinking history does not account for one or more retrograde estimates under this model.";
         retroDrinkingCopy.textContent =
-          "The highest theoretical alcohol concentration from the reported drinks (" +
-          fmt(theoreticalHigh) + " g/dL) is below the low end of the estimated concentration at the target time (" +
-          fmt(low) + " " + unit + "). Under the ASB 122 assumptions used here, the reported amount is insufficient to account for the estimated result.";
+          "The highest theoretical concentration from the reported drinks (" +
+          fmt(theoreticalHigh) + " g/dL) is below the low end of " +
+          estimatesNotAccountedFor.map((estimate) => estimate.label).join(", ") +
+          ". Under the ASB 122 assumptions used here, the reported amount is insufficient to account for those estimate(s).";
         drinkingComparisonSummary =
-          "Reported-drinking comparison: the theoretical maximum from the reported drinks is below the retrograde estimate.";
+          "Reported-drinking comparison: the theoretical maximum from the reported drinks is below one or more retrograde estimates.";
       } else {
         retroDrinkingStatus.textContent =
-          "Reported drinking history is not excluded by the retrograde estimate.";
+          "Reported drinking history is not excluded by the entered retrograde estimates.";
         retroDrinkingCopy.textContent =
-          "The theoretical maximum range from the reported drinks (" +
-          fmt(theoreticalLow) + "–" + fmt(theoreticalHigh) +
-          " g/dL) reaches or exceeds at least part of the retrograde estimate. This means the reported amount is not ruled out by this calculation; it does not establish that the drinking history is accurate.";
+          "The theoretical maximum from the reported drinks reaches or exceeds the low end of each entered retrograde estimate. This means the reported amount is not ruled out by this calculation; it does not establish that the drinking history is accurate.";
         drinkingComparisonSummary =
-          "Reported-drinking comparison: the reported amount is not excluded by the retrograde estimate.";
+          "Reported-drinking comparison: the reported amount is not excluded by the entered retrograde estimates.";
       }
 
       if (vd.missing.length) {
@@ -1204,42 +1365,35 @@ retrogradeForm.addEventListener("submit", (event) => {
     }
   }
 
-  let quality = "Estimate quality: Limited — absorption status not established.";
-  let absorptionStatus = "Post-absorptive status NOT assumed.";
-  const warnings = [];
-
-  if (lastDrink) {
-    const targetSinceDrink = hoursBetween(lastDrink, targetTime);
-
-    if (targetSinceDrink >= 2) {
-      quality = "Estimate quality: Standard range — reported drinking cessation was at least 2 hours before the target time.";
-      absorptionStatus = "Post-absorptive status ASSUMED based on the reported last drink occurring at least 2 hours before the target time.";
-    } else if (targetSinceDrink >= 0) {
-      absorptionStatus = "Post-absorptive status NOT assumed because the reported last drink was less than 2 hours before the target time.";
-      warnings.push("Continued absorption may still have been occurring at the target time. The displayed range is the mathematical post-absorptive extrapolation and should be interpreted with this limitation.");
-    } else {
-      absorptionStatus = "Post-absorptive status NOT assumed because the reported last-drink time is after the target time.";
-      warnings.push("The reported last-drink time is after the target time, indicating possible post-incident drinking or an inconsistent timeline.");
-    }
-  } else {
-    warnings.push("No last-drink time was provided. ASB 122 states that when drinking history is unknown, it is not reasonable to assume the subject was post-absorptive.");
-  }
-
-  retroQuality.textContent = quality + " " + absorptionStatus;
   if (warnings.length) {
     retroWarning.hidden = false;
     retroWarning.textContent = warnings.join(" ");
   }
 
   const retroLines = [
-    "Measured result: " + fmt(measured) + " " + unit + ".",
-    conversionLine,
-    "Elapsed time: " + elapsed.toFixed(2) + " hours.",
-    "Elimination-rate range: " + c.eliminationRateMin.toFixed(3) + "–" + c.eliminationRateMax.toFixed(3) + " g/dL/hour.",
+    "Target time: " + targetTime.toLocaleString() + ".",
+    "Elimination-rate range used for every reading: " +
+      c.eliminationRateMin.toFixed(3) + "–" + c.eliminationRateMax.toFixed(3) + " g/dL/hour.",
     "Absorption assumption: " + absorptionStatus,
-    "Equation: earlier concentration = test concentration + (elimination rate × elapsed time).",
-    "Estimated earlier concentration: " + fmt(low) + "–" + fmt(high) + " " + unit + "."
+    "ASB 122 rule: a calculated elimination rate from two or more test results is not substituted for the standard range."
   ];
+
+  validEstimates.forEach((estimate) => {
+    retroLines.push(
+      estimate.label + ": measured " + fmt(estimate.measured) + " " + estimate.unit +
+      " at " + estimate.testTime.toLocaleString() + ".",
+      estimate.conversionLine,
+      estimate.label + " elapsed time: " + estimate.elapsed.toFixed(2) + " hours.",
+      estimate.label + " estimated target concentration: " +
+      fmt(estimate.low) + "–" + fmt(estimate.high) + " " + estimate.unit + "."
+    );
+  });
+
+  estimates.filter((estimate) => !estimate.valid).forEach((estimate) => {
+    retroLines.push(estimate.label + " was not used: " + estimate.reason);
+  });
+
+  if (multiSummary) retroLines.push(multiSummary);
 
   if (reportedDrinks.validRows > 0) {
     retroLines.push(...reportedDrinks.descriptions);

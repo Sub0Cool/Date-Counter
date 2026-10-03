@@ -449,29 +449,23 @@
 
               <section class="bac-mode-panel" data-bac-panel="retrograde">
                 <form id="retrograde-form" class="bac-form">
-                  <div class="bac-form-grid">
-                    <label>
-                      <span>Measured BAC / alcohol concentration</span>
-                      <input id="retro-bac" type="number" min="0" max="1" step="0.001" placeholder="e.g., 0.082" required />
-                      <small>Enter g/dL for blood/serum/plasma or g/210 L for breath.</small>
-                    </label>
+                  <section class="retro-readings-section" aria-labelledby="retro-readings-title">
+                    <div class="drink-list-heading">
+                      <div>
+                        <p class="eyebrow">Alcohol measurements</p>
+                        <h3 id="retro-readings-title">BAC / alcohol readings</h3>
+                        <p class="retro-drinking-intro">
+                          Add each available alcohol measurement. Each reading is extrapolated independently
+                          to the target time using the ASB 122 elimination-rate range.
+                        </p>
+                      </div>
+                      <button id="retro-add-reading" class="add-button" type="button"><span aria-hidden="true">+</span>Add reading</button>
+                    </div>
 
-                    <label>
-                      <span>Specimen / result type</span>
-                      <select id="retro-specimen">
-                        <option value="blood">Whole blood</option>
-                        <option value="breath">Breath</option>
-                        <option value="serum">Serum</option>
-                        <option value="plasma">Plasma</option>
-                        <option value="urine">Urine</option>
-                      </select>
-                    </label>
+                    <div id="retro-reading-rows" class="retro-reading-rows"></div>
+                  </section>
 
-                    <label>
-                      <span>Test / draw time</span>
-                      <input id="retro-test-time" type="datetime-local" required />
-                    </label>
-
+                  <div class="bac-form-grid retro-timeline-grid">
                     <label>
                       <span>Earlier target time</span>
                       <input id="retro-target-time" type="datetime-local" required />
@@ -482,8 +476,17 @@
                       <span>Reported last-drink time (optional)</span>
                       <input id="retro-last-drink" type="datetime-local" />
                     </label>
-
                   </div>
+
+                  <aside class="bac-assumption-note" aria-label="Multiple-reading methodology">
+                    <strong>Multiple-reading methodology</strong>
+                    <p>
+                      Additional readings provide independent checks on the estimate and can show whether
+                      the extrapolated ranges are consistent with one another. Reference Desk does not derive
+                      a personalized elimination rate from the readings; ASB 122 says a rate calculated from
+                      two or more test results should not replace the standard elimination-rate range.
+                    </p>
+                  </aside>
 
                   <section class="retro-drinking-section" aria-labelledby="retro-drinking-title">
                     <div class="drink-list-heading">
@@ -492,7 +495,7 @@
                         <h3 id="retro-drinking-title">Reported drinking</h3>
                         <p class="retro-drinking-intro">
                           Enter the reported alcohol consumed to compare its theoretical maximum alcohol
-                          concentration with the retrograde estimate. This does not change the retrograde calculation itself.
+                          concentration with the retrograde estimates. This does not change the retrograde calculations themselves.
                         </p>
                       </div>
                       <button id="retro-add-drink" class="add-button" type="button"><span aria-hidden="true">+</span>Add beverage</button>
@@ -543,7 +546,7 @@
                 <div id="retro-result" class="bac-result" hidden aria-live="polite">
                   <div class="bac-result-heading">
                     <div>
-                      <p class="eyebrow">Estimated earlier concentration</p>
+                      <p class="eyebrow">Retrograde analysis</p>
                       <strong id="retro-range" class="bac-range">—</strong>
                     </div>
                     <button class="method-badge" type="button" data-method-definition="retrograde">
@@ -553,6 +556,14 @@
 
                   <p id="retro-quality" class="estimate-quality"></p>
                   <div id="retro-warning" class="bac-warning" hidden></div>
+
+                  <div id="retro-reading-results" class="retro-reading-results"></div>
+
+                  <div id="retro-multi-comparison" class="bac-comparison" hidden>
+                    <p class="eyebrow">Multiple-reading comparison</p>
+                    <strong id="retro-multi-status"></strong>
+                    <p id="retro-multi-copy"></p>
+                  </div>
 
                   <div id="retro-drinking-comparison" class="bac-comparison" hidden>
                     <p class="eyebrow">Reported-drinking comparison</p>
@@ -713,6 +724,33 @@
         </button>
 
         <p class="range-error" role="alert"></p>
+      </div>
+    </template>
+
+
+    <template id="retro-reading-template">
+      <div class="retro-reading-row">
+        <div class="retro-reading-number" aria-hidden="true"></div>
+        <label>
+          <span>Measured BAC / alcohol concentration</span>
+          <input class="retro-reading-value" type="number" min="0" max="1" step="0.001" placeholder="e.g., 0.120" required />
+          <small>g/dL for blood/serum/plasma or g/210 L for breath.</small>
+        </label>
+        <label>
+          <span>Specimen / result type</span>
+          <select class="retro-reading-specimen">
+            <option value="blood">Whole blood</option>
+            <option value="breath">Breath</option>
+            <option value="serum">Serum</option>
+            <option value="plasma">Plasma</option>
+            <option value="urine">Urine</option>
+          </select>
+        </label>
+        <label>
+          <span>Test / draw time</span>
+          <input class="retro-reading-time" type="datetime-local" required />
+        </label>
+        <button class="remove-reading" type="button" aria-label="Remove alcohol reading">×</button>
       </div>
     </template>
 
