@@ -1765,3 +1765,33 @@ h1 {
     text-align: left;
   }
 }
+
+
+.retro-drinking-section {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.retro-drinking-intro {
+  max-width: 720px;
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.retro-person-grid {
+  margin-top: 14px;
+}
+
+#retro-drink-rows:empty::before {
+  content: "No reported beverages added. Add a beverage to run the consistency check.";
+  display: block;
+  padding: 13px 14px;
+  color: var(--muted);
+  background: var(--mint-light);
+  border: 1px dashed var(--line);
+  border-radius: 9px;
+  font-size: 0.84rem;
+}
