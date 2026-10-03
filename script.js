@@ -1015,6 +1015,8 @@ const retrogradeForm = document.querySelector("#retrograde-form");
 const retroResult = document.querySelector("#retro-result");
 const retroRange = document.querySelector("#retro-range");
 const retroQuality = document.querySelector("#retro-quality");
+const retroLaySummary = document.querySelector("#retro-lay-summary");
+const retroLaySummaryText = document.querySelector("#retro-lay-summary-text");
 const retroWarning = document.querySelector("#retro-warning");
 const retroCalculation = document.querySelector("#retro-calculation");
 const retroReadingRows = document.querySelector("#retro-reading-rows");
@@ -1119,7 +1121,8 @@ function getRetroReadingEstimate(row, index, targetTime, c) {
   let testLow = measured;
   let testHigh = measured;
   let conversionLine = "No specimen conversion was required.";
-  let unitClass = specimen === "breath" ? "breath" : "blood";
+  const isBreathBased = specimen === "breath" || specimen === "pas";
+  let unitClass = isBreathBased ? "breath" : "blood";
 
   if (specimen === "serum" || specimen === "plasma") {
     testLow = measured / c.serumPlasmaRatioMax;
@@ -1140,7 +1143,7 @@ function getRetroReadingEstimate(row, index, targetTime, c) {
   const elapsed = hoursBetween(targetTime, testTime);
   const low = testLow + c.eliminationRateMin * elapsed;
   const high = testHigh + c.eliminationRateMax * elapsed;
-  const unit = specimen === "breath" ? "g/210 L" : "g/dL";
+  const unit = isBreathBased ? "g/210 L" : "g/dL";
 
   return {
     valid: true,
@@ -1175,7 +1178,12 @@ function renderRetroReadingCards(estimates) {
 
     if (estimate.valid) {
       const time = document.createElement("span");
-      time.textContent = estimate.testTime.toLocaleString();
+      const sourceLabel = estimate.specimen === "pas"
+        ? "PAS"
+        : estimate.specimen === "breath"
+          ? "Breath test"
+          : estimate.specimen;
+      time.textContent = sourceLabel + " · " + estimate.testTime.toLocaleString();
       heading.append(time);
 
       const range = document.createElement("p");
@@ -1202,6 +1210,8 @@ retrogradeForm.addEventListener("submit", (event) => {
   const lastDrink = lastDrinkRaw ? new Date(lastDrinkRaw) : null;
 
   retroResult.hidden = false;
+  retroLaySummary.hidden = true;
+  retroLaySummaryText.textContent = "";
   retroWarning.hidden = true;
   retroWarning.textContent = "";
   retroMultiComparison.hidden = true;
@@ -1302,6 +1312,31 @@ retrogradeForm.addEventListener("submit", (event) => {
       " ASB 122 specifically advises that an elimination rate calculated from two or more test results should not be used in place of an elimination-rate range.";
   }
 
+  let retroPlainSummary = "";
+
+  if (validEstimates.length === 1) {
+    const estimate = validEstimates[0];
+    retroPlainSummary =
+      "The estimated alcohol concentration at the target time was approximately " +
+      fmt(estimate.low) + "–" + fmt(estimate.high) + " " + estimate.unit + ".";
+  } else if (comparableClasses.size === 1) {
+    const overlapLow = Math.max(...validEstimates.map((estimate) => estimate.low));
+    const overlapHigh = Math.min(...validEstimates.map((estimate) => estimate.high));
+    const unit = validEstimates[0].unit;
+
+    if (overlapLow <= overlapHigh) {
+      retroPlainSummary =
+        "The readings are consistent with an estimated target-time concentration of approximately " +
+        fmt(overlapLow) + "–" + fmt(overlapHigh) + " " + unit + ".";
+    } else {
+      retroPlainSummary =
+        "The readings do not produce a single overlapping target-time alcohol concentration range under this model.";
+    }
+  } else {
+    retroPlainSummary =
+      "The breath-based and blood-based readings were analyzed separately and do not produce one combined target-time range.";
+  }
+
   const reportedDrinks = getDrinkHistory(retroDrinkRows);
   const retroWeightRaw = document.querySelector("#retro-weight").value;
   const retroWeightLb = retroWeightRaw ? Number(retroWeightRaw) : null;
@@ -1364,6 +1399,27 @@ retrogradeForm.addEventListener("submit", (event) => {
       }
     }
   }
+
+  if (reportedDrinks.validRows > 0 && Number.isFinite(retroWeightLb) && retroWeightLb > 0) {
+    const weightKgForSummary = retroWeightLb * c.kgPerLb;
+    const vdForSummary = getVdEstimate(retroSex, weightKgForSummary, retroHeightIn, retroAge);
+    const theoreticalHighForSummary =
+      reportedDrinks.grams / (vdForSummary.low * weightKgForSummary * 10);
+    const inconsistentWithHistory = validEstimates.some(
+      (estimate) => theoreticalHighForSummary < estimate.low
+    );
+
+    if (inconsistentWithHistory) {
+      retroPlainSummary =
+        "The estimated alcohol concentration is inconsistent with the reported drinking amount under this model.";
+    } else {
+      retroPlainSummary +=
+        " The reported drinking amount is not excluded by the estimated concentration.";
+    }
+  }
+
+  retroLaySummaryText.textContent = retroPlainSummary;
+  retroLaySummary.hidden = !retroPlainSummary;
 
   if (warnings.length) {
     retroWarning.hidden = false;
@@ -1480,6 +1536,8 @@ const maximumForm = document.querySelector("#maximum-bac-form");
 const maximumResult = document.querySelector("#maximum-bac-result");
 const maximumRange = document.querySelector("#maximum-bac-range");
 const maximumQuality = document.querySelector("#maximum-quality");
+const maximumLaySummary = document.querySelector("#maximum-lay-summary");
+const maximumLaySummaryText = document.querySelector("#maximum-lay-summary-text");
 const maximumWarning = document.querySelector("#maximum-warning");
 const maximumEthanol = document.querySelector("#maximum-ethanol");
 const maximumVd = document.querySelector("#maximum-vd");
@@ -1529,6 +1587,8 @@ maximumForm.addEventListener("submit", (event) => {
   });
 
   maximumResult.hidden = false;
+  maximumLaySummary.hidden = true;
+  maximumLaySummaryText.textContent = "";
   maximumWarning.hidden = true;
   maximumWarning.textContent = "";
   maximumComparison.hidden = true;
@@ -1574,7 +1634,8 @@ maximumForm.addEventListener("submit", (event) => {
   let comparisonSummary = null;
   let observedLow = null;
   let observedHigh = null;
-  let observedUnit = observedSpecimen === "breath" ? "g/210 L" : "g/dL";
+  const observedIsBreathBased = observedSpecimen === "breath" || observedSpecimen === "pas";
+  let observedUnit = observedIsBreathBased ? "g/210 L" : "g/dL";
 
   if (observedValue !== null && Number.isFinite(observedValue) && observedValue >= 0) {
     observedLow = observedValue;
@@ -1627,6 +1688,20 @@ maximumForm.addEventListener("submit", (event) => {
     }
   }
 
+  let maximumPlainSummary =
+    "The reported drinking history corresponds to a theoretical maximum alcohol concentration of approximately " +
+    fmt(bacLow) + "–" + fmt(bacHigh) + " g/dL.";
+
+  if (observedValue !== null && Number.isFinite(observedValue) && observedValue >= 0) {
+    const exceedsMaximumForSummary = observedLow > bacHigh;
+    maximumPlainSummary = exceedsMaximumForSummary
+      ? "The observed alcohol concentration is inconsistent with the reported drinking amount under this model."
+      : "The reported drinking amount could account for the observed alcohol concentration under this model.";
+  }
+
+  maximumLaySummaryText.textContent = maximumPlainSummary;
+  maximumLaySummary.hidden = false;
+
   const lines = [
     ...drinkDescriptions,
     "Total ethanol dose: " + grams.toFixed(1) + " g.",
@@ -1642,7 +1717,8 @@ maximumForm.addEventListener("submit", (event) => {
   if (observedValue !== null && Number.isFinite(observedValue)) {
     lines.push(
       "Observed result entered: " + fmt(observedValue) + " " +
-      (observedSpecimen === "breath" ? "g/210 L" : "g/dL") + " (" + observedSpecimen + ")."
+      (observedIsBreathBased ? "g/210 L" : "g/dL") + " (" +
+      (observedSpecimen === "pas" ? "PAS" : observedSpecimen) + ")."
     );
     if (observedLow !== observedHigh) {
       lines.push(

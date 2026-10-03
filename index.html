@@ -555,6 +555,10 @@
                   </div>
 
                   <p id="retro-quality" class="estimate-quality"></p>
+                  <div id="retro-lay-summary" class="bac-lay-summary" hidden>
+                    <span>Plain-language summary</span>
+                    <strong id="retro-lay-summary-text"></strong>
+                  </div>
                   <div id="retro-warning" class="bac-warning" hidden></div>
 
                   <div id="retro-reading-results" class="retro-reading-results"></div>
@@ -621,7 +625,8 @@
                       <span>Observed result type</span>
                       <select id="max-observed-specimen">
                         <option value="blood">Whole blood</option>
-                        <option value="breath">Breath</option>
+                        <option value="breath">Breath test</option>
+                        <option value="pas">PAS (preliminary alcohol screening)</option>
                         <option value="serum">Serum</option>
                         <option value="plasma">Plasma</option>
                       </select>
@@ -658,6 +663,10 @@
                   </div>
 
                   <p id="maximum-quality" class="estimate-quality"></p>
+                  <div id="maximum-lay-summary" class="bac-lay-summary" hidden>
+                    <span>Plain-language summary</span>
+                    <strong id="maximum-lay-summary-text"></strong>
+                  </div>
                   <div id="maximum-warning" class="bac-warning" hidden></div>
 
                   <div class="bac-result-grid">
@@ -740,7 +749,8 @@
           <span>Specimen / result type</span>
           <select class="retro-reading-specimen">
             <option value="blood">Whole blood</option>
-            <option value="breath">Breath</option>
+            <option value="breath">Breath test</option>
+            <option value="pas">PAS (preliminary alcohol screening)</option>
             <option value="serum">Serum</option>
             <option value="plasma">Plasma</option>
             <option value="urine">Urine</option>
