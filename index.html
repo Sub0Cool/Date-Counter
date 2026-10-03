@@ -485,6 +485,49 @@
 
                   </div>
 
+                  <section class="retro-drinking-section" aria-labelledby="retro-drinking-title">
+                    <div class="drink-list-heading">
+                      <div>
+                        <p class="eyebrow">Optional consistency check</p>
+                        <h3 id="retro-drinking-title">Reported drinking</h3>
+                        <p class="retro-drinking-intro">
+                          Enter the reported alcohol consumed to compare its theoretical maximum alcohol
+                          concentration with the retrograde estimate. This does not change the retrograde calculation itself.
+                        </p>
+                      </div>
+                      <button id="retro-add-drink" class="add-button" type="button"><span aria-hidden="true">+</span>Add beverage</button>
+                    </div>
+
+                    <div class="bac-form-grid retro-person-grid">
+                      <label>
+                        <span>Weight (lb)</span>
+                        <input id="retro-weight" type="number" min="1" step="0.1" placeholder="Required for drinking comparison" />
+                      </label>
+
+                      <label>
+                        <span>Sex assigned at birth (optional)</span>
+                        <select id="retro-sex">
+                          <option value="unknown">Unknown / not provided</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                        </select>
+                      </label>
+
+                      <label>
+                        <span>Age (optional)</span>
+                        <input id="retro-age" type="number" min="1" max="120" step="1" />
+                        <small>Used for individualized male Vd when height is also provided.</small>
+                      </label>
+
+                      <label>
+                        <span>Height (inches, optional)</span>
+                        <input id="retro-height" type="number" min="1" step="0.1" />
+                      </label>
+                    </div>
+
+                    <div id="retro-drink-rows" class="drink-rows"></div>
+                  </section>
+
                   <aside class="bac-assumption-note" aria-label="Absorption assumption">
                     <strong>Absorption assumption</strong>
                     <p>
@@ -510,6 +553,12 @@
 
                   <p id="retro-quality" class="estimate-quality"></p>
                   <div id="retro-warning" class="bac-warning" hidden></div>
+
+                  <div id="retro-drinking-comparison" class="bac-comparison" hidden>
+                    <p class="eyebrow">Reported-drinking comparison</p>
+                    <strong id="retro-drinking-status"></strong>
+                    <p id="retro-drinking-copy"></p>
+                  </div>
 
                   <details class="calculation-details">
                     <summary>How this result was calculated</summary>

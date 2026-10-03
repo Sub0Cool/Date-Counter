@@ -1017,6 +1017,60 @@ const retroRange = document.querySelector("#retro-range");
 const retroQuality = document.querySelector("#retro-quality");
 const retroWarning = document.querySelector("#retro-warning");
 const retroCalculation = document.querySelector("#retro-calculation");
+const retroDrinkRows = document.querySelector("#retro-drink-rows");
+const retroAddDrinkButton = document.querySelector("#retro-add-drink");
+const retroDrinkingComparison = document.querySelector("#retro-drinking-comparison");
+const retroDrinkingStatus = document.querySelector("#retro-drinking-status");
+const retroDrinkingCopy = document.querySelector("#retro-drinking-copy");
+const drinkTemplate = document.querySelector("#drink-row-template");
+
+function appendDrinkRow(container) {
+  const row = drinkTemplate.content.firstElementChild.cloneNode(true);
+  container.append(row);
+}
+
+function wireDrinkRows(container, addButton, keepOne = false) {
+  addButton.addEventListener("click", () => appendDrinkRow(container));
+  container.addEventListener("click", (event) => {
+    const remove = event.target.closest(".remove-drink");
+    if (!remove) return;
+    if (keepOne && container.children.length === 1) return;
+    remove.closest(".drink-row").remove();
+  });
+}
+
+function getDrinkHistory(container) {
+  let grams = 0;
+  const descriptions = [];
+  let validRows = 0;
+
+  [...container.children].forEach((row, index) => {
+    const name = row.querySelector(".drink-name").value.trim() || ("Beverage " + (index + 1));
+    const volume = Number(row.querySelector(".drink-volume").value);
+    const abv = Number(row.querySelector(".drink-abv").value);
+    const quantity = Number(row.querySelector(".drink-quantity").value);
+
+    if (!Number.isFinite(volume) || volume <= 0 ||
+        !Number.isFinite(abv) || abv <= 0 ||
+        !Number.isFinite(quantity) || quantity <= 0) {
+      return;
+    }
+
+    const rowGrams = volume * quantity * BAC_METHODS.constants.mlPerOz *
+      (abv / 100) * BAC_METHODS.constants.ethanolDensityGPerMl;
+
+    grams += rowGrams;
+    validRows += 1;
+    descriptions.push(
+      name + ": " + quantity + " × " + volume + " oz at " + abv +
+      "% ABV = " + rowGrams.toFixed(1) + " g ethanol"
+    );
+  });
+
+  return { grams, descriptions, validRows };
+}
+
+wireDrinkRows(retroDrinkRows, retroAddDrinkButton, false);
 
 retrogradeForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1032,6 +1086,9 @@ retrogradeForm.addEventListener("submit", (event) => {
   retroResult.hidden = false;
   retroWarning.hidden = true;
   retroWarning.textContent = "";
+  retroDrinkingComparison.hidden = true;
+  retroDrinkingStatus.textContent = "";
+  retroDrinkingCopy.textContent = "";
 
   if (!Number.isFinite(measured) || measured < c.retrogradeMinimumAc) {
     retroRange.textContent = "Not calculated";
@@ -1083,6 +1140,70 @@ retrogradeForm.addEventListener("submit", (event) => {
   const unit = specimen === "breath" ? "g/210 L" : "g/dL";
   retroRange.textContent = fmt(low) + "–" + fmt(high) + " " + unit;
 
+  const reportedDrinks = getDrinkHistory(retroDrinkRows);
+  const retroWeightRaw = document.querySelector("#retro-weight").value;
+  const retroWeightLb = retroWeightRaw ? Number(retroWeightRaw) : null;
+  const retroSex = document.querySelector("#retro-sex").value;
+  const retroAgeRaw = document.querySelector("#retro-age").value;
+  const retroHeightRaw = document.querySelector("#retro-height").value;
+  const retroAge = retroAgeRaw ? Number(retroAgeRaw) : null;
+  const retroHeightIn = retroHeightRaw ? Number(retroHeightRaw) : null;
+
+  let drinkingComparisonSummary = null;
+  let drinkingMethodSummary = null;
+
+  if (reportedDrinks.validRows > 0) {
+    retroDrinkingComparison.hidden = false;
+
+    if (!Number.isFinite(retroWeightLb) || retroWeightLb <= 0) {
+      retroDrinkingStatus.textContent = "Weight is needed for the reported-drinking comparison.";
+      retroDrinkingCopy.textContent =
+        "The retrograde estimate above is still valid. Enter body weight to calculate the theoretical maximum alcohol concentration from the reported drinks.";
+      drinkingComparisonSummary = "Reported-drinking comparison not calculated because body weight was not provided.";
+    } else {
+      const weightKg = retroWeightLb * c.kgPerLb;
+      const vd = getVdEstimate(retroSex, weightKg, retroHeightIn, retroAge);
+      const theoreticalLow = reportedDrinks.grams / (vd.high * weightKg * 10);
+      const theoreticalHigh = reportedDrinks.grams / (vd.low * weightKg * 10);
+      const insufficient = theoreticalHigh < low;
+
+      drinkingMethodSummary =
+        "Reported drinks theoretical maximum: " + fmt(theoreticalLow) + "–" +
+        fmt(theoreticalHigh) + " g/dL using " + BAC_METHODS.definitions[vd.kind].label + ".";
+
+      if (insufficient) {
+        retroDrinkingStatus.textContent =
+          "Reported drinking history does not account for the retrograde estimate under this model.";
+        retroDrinkingCopy.textContent =
+          "The highest theoretical alcohol concentration from the reported drinks (" +
+          fmt(theoreticalHigh) + " g/dL) is below the low end of the estimated concentration at the target time (" +
+          fmt(low) + " " + unit + "). Under the ASB 122 assumptions used here, the reported amount is insufficient to account for the estimated result.";
+        drinkingComparisonSummary =
+          "Reported-drinking comparison: the theoretical maximum from the reported drinks is below the retrograde estimate.";
+      } else {
+        retroDrinkingStatus.textContent =
+          "Reported drinking history is not excluded by the retrograde estimate.";
+        retroDrinkingCopy.textContent =
+          "The theoretical maximum range from the reported drinks (" +
+          fmt(theoreticalLow) + "–" + fmt(theoreticalHigh) +
+          " g/dL) reaches or exceeds at least part of the retrograde estimate. This means the reported amount is not ruled out by this calculation; it does not establish that the drinking history is accurate.";
+        drinkingComparisonSummary =
+          "Reported-drinking comparison: the reported amount is not excluded by the retrograde estimate.";
+      }
+
+      if (vd.missing.length) {
+        retroDrinkingCopy.textContent +=
+          " A broader population Vd range was used because the following individualized information was not complete: " +
+          [...new Set(vd.missing)].join(", ") + ".";
+      }
+
+      if (vd.caution) {
+        retroDrinkingCopy.textContent +=
+          " The individualized total-body-water estimate falls below the ASB caution threshold and should be evaluated carefully.";
+      }
+    }
+  }
+
   let quality = "Estimate quality: Limited — absorption status not established.";
   let absorptionStatus = "Post-absorptive status NOT assumed.";
   const warnings = [];
@@ -1110,7 +1231,7 @@ retrogradeForm.addEventListener("submit", (event) => {
     retroWarning.textContent = warnings.join(" ");
   }
 
-  renderParagraphs(retroCalculation, [
+  const retroLines = [
     "Measured result: " + fmt(measured) + " " + unit + ".",
     conversionLine,
     "Elapsed time: " + elapsed.toFixed(2) + " hours.",
@@ -1118,26 +1239,26 @@ retrogradeForm.addEventListener("submit", (event) => {
     "Absorption assumption: " + absorptionStatus,
     "Equation: earlier concentration = test concentration + (elimination rate × elapsed time).",
     "Estimated earlier concentration: " + fmt(low) + "–" + fmt(high) + " " + unit + "."
-  ]);
+  ];
+
+  if (reportedDrinks.validRows > 0) {
+    retroLines.push(...reportedDrinks.descriptions);
+    retroLines.push("Total reported ethanol dose: " + reportedDrinks.grams.toFixed(1) + " g.");
+    if (drinkingMethodSummary) retroLines.push(drinkingMethodSummary);
+    if (drinkingComparisonSummary) retroLines.push(drinkingComparisonSummary);
+    retroLines.push(
+      "Reported-drinking comparison assumption: complete absorption of the reported drinks and no elimination are used to calculate the theoretical maximum."
+    );
+  }
+
+  renderParagraphs(retroCalculation, retroLines);
 });
 
 const drinkRows = document.querySelector("#drink-rows");
-const drinkTemplate = document.querySelector("#drink-row-template");
 const addDrinkButton = document.querySelector("#add-drink");
 
-function addDrinkRow() {
-  const row = drinkTemplate.content.firstElementChild.cloneNode(true);
-  drinkRows.append(row);
-}
-
-addDrinkButton.addEventListener("click", addDrinkRow);
-drinkRows.addEventListener("click", (event) => {
-  const remove = event.target.closest(".remove-drink");
-  if (!remove) return;
-  if (drinkRows.children.length === 1) return;
-  remove.closest(".drink-row").remove();
-});
-addDrinkRow();
+wireDrinkRows(drinkRows, addDrinkButton, true);
+appendDrinkRow(drinkRows);
 
 function getVdEstimate(sex, weightKg, heightIn, age) {
   const c = BAC_METHODS.constants;
