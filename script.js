@@ -1028,7 +1028,6 @@ retrogradeForm.addEventListener("submit", (event) => {
   const targetTime = new Date(document.querySelector("#retro-target-time").value);
   const lastDrinkRaw = document.querySelector("#retro-last-drink").value;
   const lastDrink = lastDrinkRaw ? new Date(lastDrinkRaw) : null;
-  const postStatus = document.querySelector("#retro-post-absorptive").value;
 
   retroResult.hidden = false;
   retroWarning.hidden = true;
